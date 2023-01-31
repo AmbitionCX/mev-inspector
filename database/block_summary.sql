@@ -1,4 +1,4 @@
-CREATE TABLE IF NOT EXISTS eth.attestations
+CREATE TABLE IF NOT EXISTS mev.block_summary
 (
     inclusion_slot UInt32,
     inclusion_block_root FixedString(66),
