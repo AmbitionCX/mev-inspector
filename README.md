@@ -16,7 +16,7 @@ kubectl port-forward pod/postgresql-0 5432:5432
 ## frontend
 Vite
 ```shell
-cd frontend
-npm install
-npm run dev
+cd mev-vis
+pnpm install
+pnpm run dev
 ```
