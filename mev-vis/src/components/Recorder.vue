@@ -1,10 +1,16 @@
+<template>
+  <div id="Recorder">
+    <div class="panel-header">Recorder</div>
+    <div class="panel-header-end"></div>
+    <svg>
+
+    </svg>
+  </div>
+</template>
+
 <script setup>
 
 </script>
-
-<template>
-  <div>recorder.vue</div>
-</template>
 
 <style scoped>
 
