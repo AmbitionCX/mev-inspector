@@ -1,18 +1,18 @@
 CREATE TABLE IF NOT EXISTS mev.block_summary
 (
-    inclusion_slot UInt32,
-    inclusion_block_root FixedString(66),
-    inclusion_index UInt32,
-    slot UInt32,
-    committee_index UInt32,
-    aggregation_bits String,
-    beacon_block_root FixedString(66),
-    source_epoch UInt32,
-    source_root FixedString(66),
-    target_epoch UInt32,
-    target_root FixedString(66),
+    block_number UInt32 NOT NULL,
+    miner FixedString(42) NOT NULL,
+    gas_limit UInt64 NOT NULL,
+    gas_used UInt64 NOT NULL,
+    base_fee_per_gas UInt64 NOT NULL,
+    burnt_fees UInt64 NOT NULL,
+    paid_fees UInt64 NOT NULL,
+    tx_amount UInt16 NOT NULL,
+    arbitrages UInt16 NOT NULL,
+    sandwiches UInt16 NOT NULL,
+    liquidations UInt16 NOT NULL,
+    nft_trades UInt16 NOT NULL,
+    timestamp UInt32 NOT NULL,
 ) ENGINE = MergeTree()
-ORDER BY (inclusion_slot, slot, committee_index)
-PRIMARY KEY (inclusion_slot)
-
--- aggregation_indices 
+ORDER BY (block_number)
+PRIMARY KEY (block_number)

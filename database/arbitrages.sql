@@ -1,18 +1,13 @@
-CREATE TABLE IF NOT EXISTS mev.block_summary
+CREATE TABLE IF NOT EXISTS mev.arbitrages
 (
-    inclusion_slot UInt32,
-    inclusion_block_root FixedString(66),
-    inclusion_index UInt32,
-    slot UInt32,
-    committee_index UInt32,
-    aggregation_bits String,
-    beacon_block_root FixedString(66),
-    source_epoch UInt32,
-    source_root FixedString(66),
-    target_epoch UInt32,
-    target_root FixedString(66),
+    block_number UInt32 NOT NULL,
+    transaction_hash FixedString(66) NOT NULL,
+    protocols Array(String),
+    account_address FixedString(66) NOT NULL,
+    profit_token_address String NULL,
+    start_amount Int128 NULL,
+    end_amount Int128 NULL,
+    profit_amount Int128 NULL,
 ) ENGINE = MergeTree()
-ORDER BY (inclusion_slot, slot, committee_index)
-PRIMARY KEY (inclusion_slot)
-
--- aggregation_indices 
+ORDER BY (block_number, transaction_hash)
+PRIMARY KEY (block_number,transaction_hash)

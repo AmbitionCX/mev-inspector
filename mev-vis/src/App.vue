@@ -20,31 +20,38 @@
 <style>
 #Overview{
   position: absolute;
-  top:0px;
+  top:5px;
   left:3px;
   background: #ffffff;
   z-index:0;
+  border: solid;
 }
 #Block-view {
   position: absolute;
-  top:0px;
+  top:200px;
   left:823px;
   background: #ffffff;
   border-radius: 2px;
   border-color: blueviolet;
   z-index:0;
+  border: solid;
 }
 #Transaction-view {
   position:absolute;
   top:335px;
   left:5px;
   background: #ffffff;
+  border: solid;
 }
 #Selector {
+  top:400px;
   position:absolute;
+  border: solid;
 }
 #Recorder {
+  top:500px;
   position:absolute;
+  border: solid;
 }
 #app {
     position: absolute;
@@ -70,6 +77,7 @@
   box-shadow: 0 1px 2px rgba(26 26 26 0.2);
   z-index:99;
   text-align: left;
+  text-decoration: inherit;
 }
 .panel-header-end {
   position: absolute;
@@ -79,5 +87,6 @@
   border-right: 18px solid #ffffff;
   border-bottom: 0px solid #ffffff;
   z-index:98;
+  text-decoration: inherit;
 }
 </style>
