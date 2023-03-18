@@ -1,18 +1,17 @@
-CREATE TABLE IF NOT EXISTS mev.block_summary
+CREATE TABLE IF NOT EXISTS mev.nft_trades
 (
-    inclusion_slot UInt32,
-    inclusion_block_root FixedString(66),
-    inclusion_index UInt32,
-    slot UInt32,
-    committee_index UInt32,
-    aggregation_bits String,
-    beacon_block_root FixedString(66),
-    source_epoch UInt32,
-    source_root FixedString(66),
-    target_epoch UInt32,
-    target_root FixedString(66),
+    block_number UInt32 NOT NULL,
+    transaction_hash FixedString(66) NOT NULL,
+    abi_name String NOT NULL,
+    protocol String NOT NULL,
+    seller_address FixedString(42) NOT NULL,
+    buyer_address FixedString(42) NOT NULL,
+    payment_token_address FixedString(42) NOT NULL,
+    payment_amount Int128 NOT NULL,
+    collection_address FixedString(42) NOT NULL,
+    token_id UInt32 NOT NULL
 ) ENGINE = MergeTree()
-ORDER BY (inclusion_slot, slot, committee_index)
-PRIMARY KEY (inclusion_slot)
+ORDER BY (block_number, transaction_hash)
+PRIMARY KEY (block_number, transaction_hash)
 
 -- aggregation_indices 
