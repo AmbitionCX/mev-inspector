@@ -11,6 +11,14 @@ kubectl port-forward pod/postgresql-0 5432:5432
 ```
 3. open data from [Mevboost.pics](https://mevboost.pics/data.html). Those data are formed in Apache Parquet format. You can load it to clickhouse.
 
+## backend
+Run backend server:
+```shell
+cd database
+npm start
+```
+Which will run `server.js` to start the express server. You can also run it manually by `node server.js`
+
 ## frontend
 The frontend is writen with Vite + Vue3 + d3.js. Run the frontend with the following commands:
 ```shell

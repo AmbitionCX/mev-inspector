@@ -186,6 +186,7 @@ const query_blocks = async ( block_number_i ) => {
 const execute = async (start, end) => {
   for (let i = start; i < end; i++){
     await query_blocks(i);
+    console.log("finished block: ", i);
     await new Promise(r => setTimeout(r, 1000));
   }  
 }
