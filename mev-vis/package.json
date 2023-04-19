@@ -1,7 +1,14 @@
 {
   "name": "mev-vis",
-  "private": true,
   "version": "0.0.0",
+  "private": true,
+  "devDependencies": {
+    "@vitejs/plugin-vue": "^4.0.0",
+    "vite": "^4.1.0",
+    "@vue/cli-plugin-babel": "~5.0.0",
+    "@vue/cli-plugin-eslint": "~5.0.0",
+    "@vue/cli-service": "~5.0.0"
+  },
   "type": "module",
   "scripts": {
     "dev": "vite",
@@ -16,8 +23,6 @@
     "tailwindcss": "^3.2.7",
     "vue": "^3.2.45"
   },
-  "devDependencies": {
-    "@vitejs/plugin-vue": "^4.0.0",
-    "vite": "^4.1.0"
-  }
+  "readme": "ERROR: No README data found!",
+  "_id": "mev-vis@0.0.0"
 }
