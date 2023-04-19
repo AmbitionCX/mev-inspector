@@ -1,14 +1,14 @@
 <template>
   <div>
+    <p>{{testdata}}</p>
     <overview />
     <blockview />
     <transactionview />
     <selector />
     <recorder />
-    <h1>{{ testdata }}</h1>
+    <BlockView :testdata="testdata" :testdata1="testdata1" ></BlockView>
   </div>
 </template>
-
 <script>
 import axios from 'axios'
 import overview from './components/OverView.vue';
@@ -16,20 +16,25 @@ import blockview from './components/BlockView.vue';
 import transactionview from './components/TransactionView.vue';
 import selector from './components/Selector.vue';
 import recorder from './components/Recorder.vue';
+import BlockView from "./components/BlockView.vue";
 
 export default {
   name: 'MEV-Inspector',
   components: {
+     BlockView
 
   },
   data() {
     return {
-      testdata: 0,
+      testdata: [],
+      testdata1: [],
     }
   },
   mounted() {
     this.getTestData();
+    this.getTestData1();
   },
+
   methods: {
     getTestData() {
       const path = 'http://localhost:7070/test';
@@ -42,7 +47,20 @@ export default {
           console.error(error);
         });
     },
+    getTestData1() {
+      const path = 'http://localhost:7070/test1';
+      axios
+        .get(path)
+        .then(result => {
+          this.testdata1 = result.data;
+          console.log(result.data)
+        })
+        .catch(error => {
+          console.error(error);
+        });
+    },
   }
+
 }
 </script>
 
