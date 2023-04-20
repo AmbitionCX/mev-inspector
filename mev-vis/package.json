@@ -4,10 +4,10 @@
   "private": true,
   "devDependencies": {
     "@vitejs/plugin-vue": "^4.0.0",
-    "vite": "^4.1.0",
     "@vue/cli-plugin-babel": "~5.0.0",
     "@vue/cli-plugin-eslint": "~5.0.0",
-    "@vue/cli-service": "~5.0.0"
+    "@vue/cli-service": "~5.0.0",
+    "vite": "^4.1.0"
   },
   "type": "module",
   "scripts": {
@@ -16,12 +16,15 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@babel/core": "^7.21.4",
     "autoprefixer": "^10.4.14",
     "axios": "^1.3.4",
     "dotenv": "^16.0.3",
+    "eslint": "^8.0.0",
     "postcss": "^8.4.21",
     "tailwindcss": "^3.2.7",
-    "vue": "^3.2.45"
+    "vue": "^3.2.45",
+    "vuex": "^4.0.2"
   },
   "readme": "ERROR: No README data found!",
   "_id": "mev-vis@0.0.0"

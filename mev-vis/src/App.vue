@@ -1,66 +1,68 @@
 <template>
   <div>
-    <p>{{testdata}}</p>
     <overview />
     <blockview />
     <transactionview />
     <selector />
     <recorder />
-    <BlockView :testdata="testdata" :testdata1="testdata1" ></BlockView>
   </div>
 </template>
 <script>
 import axios from 'axios'
+
 import overview from './components/OverView.vue';
 import blockview from './components/BlockView.vue';
 import transactionview from './components/TransactionView.vue';
 import selector from './components/Selector.vue';
 import recorder from './components/Recorder.vue';
-import BlockView from "./components/BlockView.vue";
 
 export default {
   name: 'MEV-Inspector',
   components: {
-     BlockView
-
+    overview,
+    blockview,
+    transactionview,
+    selector,
+    recorder
   },
+
   data() {
     return {
-      testdata: [],
-      testdata1: [],
+      block_summary_data: []
     }
   },
+
   mounted() {
-    this.getTestData();
-    this.getTestData1();
+    this.getBlockBounds();
   },
 
   methods: {
-    getTestData() {
-      const path = 'http://localhost:7070/test';
+    getBlockBounds() {
+      const path = 'http://localhost:7070/get_block_bounds';
       axios
         .get(path)
         .then(result => {
-          this.testdata = result.data;
+          this.$store.commit('set_low_bound', result.data[0].min);
+          this.$store.commit('set_high_bound', result.data[0].max);
+          this.$store.commit('set_current_block', result.data[0].min);
         })
         .catch(error => {
           console.error(error);
         });
     },
-    getTestData1() {
-      const path = 'http://localhost:7070/test1';
+
+    queryBlockData() {
+      const path = 'http://localhost:7070/block_summary';
       axios
         .get(path)
         .then(result => {
-          this.testdata1 = result.data;
-          console.log(result.data)
+          this.block_summary_data = result.data;
         })
         .catch(error => {
           console.error(error);
         });
     },
   }
-
 }
 </script>
 

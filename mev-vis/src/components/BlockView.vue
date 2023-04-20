@@ -1,8 +1,7 @@
-
 <template>
   <div class="container1">
     <h1>BLOCK</h1>
-    <p>{{testdata1}}</p>
+    <p>{{ testdata1 }}</p>
     <div class="arrow-left" @click="moveLeft">
       <i class="fas fa-chevron-left"></i>
     </div>
@@ -12,27 +11,21 @@
   </div>
   <div class="container">
     <div class="main-block">
-      <div
-        v-for="(item, index) in currentBlocks"
-        :key="index"
-        class="small-block"
-        :style="{ background: item.color }"
-      >
+      <div v-for="(item, index) in currentBlocks" :key="index" class="small-block" :style="{ background: item.color }">
         <span class="tooltip">{{ item.text }}</span>
       </div>
     </div>
   </div>
 </template>
+
 <script>
 export default {
   props: {
-    testdata: {
+    block_summary: {
       required: true,
-    },
-    testdata1: {
-      required: true,
-    },
+    }
   },
+
   data() {
     return {
       currentIndex: 0,
@@ -41,20 +34,22 @@ export default {
       blocks: [],
     };
   },
+
   mounted() {
-    console.log(this.testdata1)
     this.generateBlocks(this.testdata1[this.currentIndex]);
   },
 
   computed: {
     currentBlocks() {
-      const start = 0 ;
+      const start = 0;
       let a = this.testdata1[this.currentIndex]
       const end = 222;
       return this.blocks.slice(start, end);
     },
   },
+
   methods: {
+
     generateBlocks(testdata) {
       console.log(testdata)
       for (let i = 0; i < testdata.length; i++) {
@@ -67,6 +62,7 @@ export default {
         });
       }
     },
+
     getRandomColor() {
       const letters = "0123456789ABCDEF";
       let color = "#";
@@ -75,27 +71,32 @@ export default {
       }
       return color;
     },
+
     moveLeft() {
       console.log("moveleft")
       // console.log(this.currentIndex)
       if (this.currentIndex > 0) {
         this.currentIndex--;
-        this.blockCount=Math.random()*10  ;
+        this.blockCount = Math.random() * 10;
       }
     },
+
     moveRight() {
       // console.log("moveright")
       // console.log(this.currentIndex)
       this.currentIndex++;
-      this.blockCount=Math.random()*10 +Math.random()*20+Math.random()*30 ;
+      this.blockCount = Math.random() * 10 + Math.random() * 20 + Math.random() * 30;
     },
+
   },
-  watch(){
+
+  watch() {
 
   }
 
 };
 </script>
+
 <style>
 .container1 {
   position: relative;
@@ -104,6 +105,7 @@ export default {
   align-items: center;
   height: 300px;
 }
+
 .container {
   position: relative;
   display: flex;
@@ -158,8 +160,8 @@ export default {
 
 .arrow-left,
 .arrow-right {
-  position:absolute;
-  top:50%;
+  position: absolute;
+  top: 50%;
   transform: translateY(-50%);
   width: 50px;
   height: 50px;
