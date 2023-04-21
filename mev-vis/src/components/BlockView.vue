@@ -1,7 +1,8 @@
 <template>
   <div class="container1">
-    <h1>BLOCK</h1>
-    <p>{{ testdata1 }}</p>
+    <div class="block-container">
+    <p>BLOCK&nbsp;{{ this.$store.state.current_selected_block }}</p>
+    </div>
     <div class="arrow-left" @click="moveLeft">
       <i class="fas fa-chevron-left"></i>
     </div>
@@ -19,48 +20,88 @@
 </template>
 
 <script>
+import axios from "axios";
 export default {
   props: {
     block_summary: {
       required: true,
     }
   },
-
   data() {
     return {
       currentIndex: 0,
       blockCount: 10,
       blocksPerPage: 128,
       blocks: [],
+      txn:[1],
     };
   },
+  created() {
+    //读取localStorage中之前保存的状态信息
+    let current_selected_block = JSON.parse(localStorage.getItem('current_selected_block'))
+    //将状态信息存储在全局状态管理器中，方便在组件中读取
+    this.$store.commit('setCurrentSelectedBlock', current_selected_block)
+    //读取localStorage中之前保存的状态信息
+    let HIGH_BOUND_BLOCK = JSON.parse(localStorage.getItem('HIGH_BOUND_BLOCK'))
+    //将状态信息存储在全局状态管理器中，方便在组件中读取
+    this.$store.commit('setH', HIGH_BOUND_BLOCK)
+    //读取localStorage中之前保存的状态信息
+    let LOW_BOUND_BLOCK = JSON.parse(localStorage.getItem('LOW_BOUND_BLOCK'))
+    //将状态信息存储在全局状态管理器中，方便在组件中读取
+    this.$store.commit('setL', LOW_BOUND_BLOCK)
 
+  },
   mounted() {
-    this.generateBlocks(this.testdata1[this.currentIndex]);
+    this.tx();
+    this.generateBlocks();
+    this.txn
   },
 
+   watch: {
+    // Whenever `current_selected_block` changes, save it to the local storage
+    '$store.state.current_selected_block': {
+      handler(newValue) {
+        localStorage.setItem('current_selected_block', newValue);
+      },
+      deep: true,
+    },
+  },
   computed: {
     currentBlocks() {
       const start = 0;
-      let a = this.testdata1[this.currentIndex]
-      const end = 222;
+      const end = this.txn.length;
       return this.blocks.slice(start, end);
     },
   },
 
   methods: {
+     tx() {
+       const block_number = this.$store.state.current_selected_block
+       console.log(block_number)
+       const path = `http://localhost:7070/tx/${block_number}`;
+      // `/arbitrages/${block_number}`
+       axios
+         .get(path)
+         .then(result => {
+          this.txn = result.data;
+          this.generateBlocks(this.txn);
+         })
+         .catch(error => {
+           console.error(error);
+         });
 
-    generateBlocks(testdata) {
-      console.log(testdata)
-      for (let i = 0; i < testdata.length; i++) {
+    },
+    generateBlocks(txn) {
+      for (let i = 0; i < txn.length; i++) {
         const color1 = this.getRandomColor();
         const color2 = this.getRandomColor();
-        const j = i + 1;
         this.blocks.push({
           color: `linear-gradient(45deg, ${color1}, ${color2})`,
-          text: testdata[i],
-        });
+          text: txn[i],
+        }
+        );
       }
+
     },
 
     getRandomColor() {
@@ -73,26 +114,34 @@ export default {
     },
 
     moveLeft() {
-      console.log("moveleft")
       // console.log(this.currentIndex)
-      if (this.currentIndex > 0) {
-        this.currentIndex--;
-        this.blockCount = Math.random() * 10;
+
+      const d =this.$store.state.current_selected_block-1
+      if (d >=12914944) {
+        this.$store.commit('set_current_block',  d)
+        location.reload();
+     }
+      else {
+        this.$store.commit('set_current_block',  12914944)
+        location.reload();
       }
+
+
     },
 
     moveRight() {
       // console.log("moveright")
       // console.log(this.currentIndex)
-      this.currentIndex++;
-      this.blockCount = Math.random() * 10 + Math.random() * 20 + Math.random() * 30;
+      const d =this.$store.state.current_selected_block+1
+      if (d <=12930000) {
+        this.$store.commit('set_current_block',  d)
+        location.reload();
+     }
     },
 
   },
 
-  watch() {
 
-  }
 
 };
 </script>
@@ -104,14 +153,20 @@ export default {
   justify-content: center;
   align-items: center;
   height: 300px;
-}
 
+}
+.block-container {
+    background-color: #c1e4f9;
+    padding: 100px;
+    display: inline-block;
+  }
 .container {
   position: relative;
   display: flex;
   justify-content: center;
   align-items: center;
   height: 500px;
+  z-index: 10;
 }
 
 .main-block {
@@ -133,6 +188,8 @@ export default {
   transition: filter 0.2s ease;
   position: relative;
   border-radius: 50%;
+  z-index: 1;
+
 }
 
 .tooltip {
@@ -146,11 +203,12 @@ export default {
   color: #fff;
   border-radius: 5px;
   font-size: 12px;
-  z-index: 1;
+  z-index: 999;
 }
 
 .small-block:hover .tooltip {
   display: block;
+
 }
 
 .small-block:hover {
@@ -172,6 +230,7 @@ export default {
   justify-content: center;
   align-items: center;
   transition: background-color 0.2s ease;
+
 }
 
 .arrow-left:hover,
