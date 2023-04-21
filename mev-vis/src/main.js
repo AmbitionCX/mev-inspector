@@ -1,8 +1,8 @@
 import { createApp } from 'vue'
 import App from './App.vue'
 import store from './store'
+import ElementPlus from 'element-plus'
+import 'element-plus/dist/index.css'
 import './index.css'
-import { Carousel, initTE } from "tw-elements";
-initTE({ Carousel });
 
-createApp(App).use(store).mount('#app')
+createApp(App).use(store).use(ElementPlus).mount('#app')

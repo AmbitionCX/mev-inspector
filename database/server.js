@@ -8,9 +8,7 @@ const app = express();
 const port = process.env.PORT || 7070;
 
 app.use(cors());
-// parse requests of content-type - application/json
 app.use(bodyParser.json());
-// parse requests of content-type - application/x-www-form-urlencoded
 app.use(bodyParser.urlencoded({ extended: true }));
 
 // simple route
@@ -20,26 +18,10 @@ app.get("/", (request, response) => {
 
 // query arbitrage data by block number
 app.get("/arbitrages", async (request, response) => {
-  let result_data = await query_arbitrages()
+  let result_data = await query_arbitrages(request.query.block_number)
   response.status(200).send(result_data);
 });
-app.get("/tx/:param", async (request, response) => {
-  // console.log("kk")
-  // console.log(request.params.param)
-  let result_data = await query_tx(request.params.param)
-  response.status(200).send(result_data);
-});
-const query_tx = async (block_number) => {
-  const query = `select * from mev.tx_summary where block_number=${block_number}`
-  // console.log(query)
-  const format = 'JSONEachRow'
-  const resultSet = await clickhouse.query({
-    query: query,
-    format: format,
-  });
-  const dataset = await resultSet.json();
-  return dataset;
-}
+
 const query_arbitrages = async (block_number) => {
   const query = `select * from mev.arbitrages where block_number=${block_number}`
   const format = 'JSONEachRow'
@@ -54,12 +36,12 @@ const query_arbitrages = async (block_number) => {
 
 // query sandwiche data by block number
 app.get("/sandwiches", async (request, response) => {
-  let result_data = await query_sandwiches()
+  let result_data = await query_sandwiches(request.query.block_number)
   response.status(200).send(result_data);
 });
 
-const query_sandwiches = async () => {
-  const query = 'select * from mev.sandwiches limit 1'
+const query_sandwiches = async (block_number) => {
+  const query = `select * from mev.sandwiches where block_number=${block_number}`
   const format = 'JSONEachRow'
 
   const resultSet = await clickhouse.query({
@@ -72,12 +54,12 @@ const query_sandwiches = async () => {
 
 // query liquidation data by block number
 app.get("/liquidations", async (request, response) => {
-  let result_data = await query_liquidations()
+  let result_data = await query_liquidations(request.query.block_number)
   response.status(200).send(result_data);
 });
 
-const query_liquidations = async () => {
-  const query = 'select * from mev.liquidations limit 1'
+const query_liquidations = async (block_number) => {
+  const query = `select * from mev.liquidations where block_number=${block_number}`
   const format = 'JSONEachRow'
 
   const resultSet = await clickhouse.query({
@@ -90,12 +72,12 @@ const query_liquidations = async () => {
 
 // query nft trading data by block number
 app.get("/nft_trades", async (request, response) => {
-  let result_data = await query_nft_trades()
+  let result_data = await query_nft_trades(request.query.block_number)
   response.status(200).send(result_data);
 });
 
-const query_nft_trades = async () => {
-  const query = 'select * from mev.nft_trades limit 1'
+const query_nft_trades = async (block_number) => {
+  const query = `select * from mev.nft_trades where block_number=${block_number}`
   const format = 'JSONEachRow'
 
   const resultSet = await clickhouse.query({
@@ -108,12 +90,12 @@ const query_nft_trades = async () => {
 
 // query block summary by block number
 app.get("/block_summary", async (request, response) => {
-  let result_data = await query_block_summary()
+  let result_data = await query_block_summary(request.query.block_number)
   response.status(200).send(result_data);
 });
 
-const query_block_summary = async () => {
-  const query = 'select * from mev.block_summary limit 1'
+const query_block_summary = async (block_number) => {
+  const query = `select * from mev.block_summary where block_number=${block_number}`
   const format = 'JSONEachRow'
   const resultSet = await clickhouse.query({
     query: query,
@@ -125,12 +107,12 @@ const query_block_summary = async () => {
 
 // query transaction summary data by block number
 app.get("/tx_summary", async (request, response) => {
-  let result_data = await query_tx_summary()
+  let result_data = await query_tx_summary(request.query.block_number)
   response.status(200).send(result_data);
 });
 
-const query_tx_summary = async () => {
-  const query = 'select * from mev.tx_summary limit 1'
+const query_tx_summary = async (block_number) => {
+  const query = `select * from mev.tx_summary where block_number=${block_number}`
   const format = 'JSONEachRow'
 
   const resultSet = await clickhouse.query({
@@ -143,12 +125,12 @@ const query_tx_summary = async () => {
 
 // query mevboost data by block number
 app.get("/mevboost_eth_data", async (request, response) => {
-  let result_data = await query_mevboost_eth_data()
+  let result_data = await query_mevboost_eth_data(request.query.block_number)
   response.status(200).send(result_data);
 });
 
-const query_mevboost_eth_data = async () => {
-  const query = 'select * from mev.mevboost_eth_data limit 1'
+const query_mevboost_eth_data = async (block_number) => {
+  const query = `select * from mev.mevboost_eth_data where block_number=${block_number}`
   const format = 'JSONEachRow'
 
   const resultSet = await clickhouse.query({
@@ -176,8 +158,6 @@ const get_block_bounds = async () => {
   const dataset = await resultSet.json();
   return dataset;
 }
-
-// get_block_bounds().then( res => console.log(res) )
 
 app.listen(port, () => {
   console.log(`Server is running on port ${port}.`);

@@ -37,19 +37,7 @@ export default {
     };
   },
   created() {
-    //读取localStorage中之前保存的状态信息
-    let current_selected_block = JSON.parse(localStorage.getItem('current_selected_block'))
-    //将状态信息存储在全局状态管理器中，方便在组件中读取
-    this.$store.commit('setCurrentSelectedBlock', current_selected_block)
-    //读取localStorage中之前保存的状态信息
-    let HIGH_BOUND_BLOCK = JSON.parse(localStorage.getItem('HIGH_BOUND_BLOCK'))
-    //将状态信息存储在全局状态管理器中，方便在组件中读取
-    this.$store.commit('setH', HIGH_BOUND_BLOCK)
-    //读取localStorage中之前保存的状态信息
-    let LOW_BOUND_BLOCK = JSON.parse(localStorage.getItem('LOW_BOUND_BLOCK'))
-    //将状态信息存储在全局状态管理器中，方便在组件中读取
-    this.$store.commit('setL', LOW_BOUND_BLOCK)
-
+    this.$store.commit('setCurrentSelectedBlock', JSON.parse(localStorage.getItem('current_selected_block')))
   },
   mounted() {
     this.tx();
