@@ -23,7 +23,23 @@ app.get("/arbitrages", async (request, response) => {
   let result_data = await query_arbitrages()
   response.status(200).send(result_data);
 });
-
+app.get("/tx/:param", async (request, response) => {
+  // console.log("kk")
+  // console.log(request.params.param)
+  let result_data = await query_tx(request.params.param)
+  response.status(200).send(result_data);
+});
+const query_tx = async (block_number) => {
+  const query = `select * from mev.tx_summary where block_number=${block_number}`
+  // console.log(query)
+  const format = 'JSONEachRow'
+  const resultSet = await clickhouse.query({
+    query: query,
+    format: format,
+  });
+  const dataset = await resultSet.json();
+  return dataset;
+}
 const query_arbitrages = async (block_number) => {
   const query = `select * from mev.arbitrages where block_number=${block_number}`
   const format = 'JSONEachRow'

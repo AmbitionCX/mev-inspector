@@ -5,6 +5,7 @@
     <transactionview />
     <selector />
     <recorder />
+    <p>{{ this.$store.state.HIGH_BOUND_BLOCK }}</p>
   </div>
 </template>
 <script>
@@ -19,21 +20,25 @@ import recorder from './components/Recorder.vue';
 export default {
   name: 'MEV-Inspector',
   components: {
-    overview,
+    // overview,
     blockview,
-    transactionview,
-    selector,
-    recorder
+    // transactionview,
+    // selector,
+    // recorder
   },
 
   data() {
     return {
-      block_summary_data: []
+      block_summary_data: [],
+      txn: []
     }
   },
 
   mounted() {
+
     this.getBlockBounds();
+    this.queryBlockData();
+
   },
 
   methods: {
@@ -50,7 +55,6 @@ export default {
           console.error(error);
         });
     },
-
     queryBlockData() {
       const path = 'http://localhost:7070/block_summary';
       axios
@@ -62,6 +66,7 @@ export default {
           console.error(error);
         });
     },
+
   }
 }
 </script>

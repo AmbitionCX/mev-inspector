@@ -24,7 +24,7 @@
     "postcss": "^8.4.21",
     "tailwindcss": "^3.2.7",
     "vue": "^3.2.45",
-    "vuex": "^4.0.2"
+    "vuex": "^4.1.0"
   },
   "readme": "ERROR: No README data found!",
   "_id": "mev-vis@0.0.0"
