@@ -26,14 +26,12 @@ export default createStore({
             state.HIGH_BOUND_BLOCK = payload
             localStorage.setItem('LOW_BOUND_BLOCK', JSON.stringify(state.LOW_BOUND_BLOCK))
         },
-
         // on the state of current_selected_block changes
         // read local storage
         // var item = JSON.parse(localStorage.getItem('itemKey'));
         set_current_block(state, payload) {
             state.current_selected_block = payload;
             localStorage.setItem('current_selected_block', JSON.stringify(state.current_selected_block));
-
             this.commit("queryArbitrages", payload);
             this.commit("querySandwiches", payload);
             this.commit("queryLiquidations", payload);
@@ -170,19 +168,19 @@ export default createStore({
         sandwiches_length(state) {
             return state.current_sandwiches.length;
         },
-        arbitrages_length(state) {
+        liquidations_length(state) {
             return state.current_liquidations.length;
         },
-        arbitrages_length(state) {
+        nft_trades_length(state) {
             return state.current_nft_trades.length;
         },
-        arbitrages_length(state) {
+        block_summary_length(state) {
             return state.current_block_summary.length;
         },
-        arbitrages_length(state) {
+        tx_summary_length(state) {
             return state.current_tx_summary.length;
         },
-        arbitrages_length(state) {
+        mevboost_data_length(state) {
             return state.current_mevboost_data.length;
         }
     }
