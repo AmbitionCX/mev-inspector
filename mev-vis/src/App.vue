@@ -6,15 +6,16 @@
     </div>
   </div>
   <div>
-    <!-- <overview />
+<!--    <overview />-->
     <blockview />
-    <transactionview />
-    <selector />
-    <recorder /> -->
+<!--    <transactionview />-->
+<!--    <selector />-->
+<!--    <recorder />-->
     <p>{{ this.$store.state.current_selected_block }}</p>
     <p>{{ this.$store.state.HIGH_BOUND_BLOCK }}</p>
     <p>{{ this.$store.state.LOW_BOUND_BLOCK }}</p>
-    <p>{{ this.$store.state.current_block_summary }}</p>
+    <p>{{ this.$store.state.current_block_summary[0].tx_amount }}</p>
+    <p>{{ this.$store.state.current_tx_summary }}</p>
   </div>
 </template>
 <script>
@@ -25,6 +26,7 @@ import blockview from './components/BlockView.vue';
 import transactionview from './components/TransactionView.vue';
 import selector from './components/Selector.vue';
 import recorder from './components/Recorder.vue';
+
 
 export default {
   name: 'MEV-Inspector',
@@ -60,6 +62,8 @@ export default {
           this.$store.commit('set_low_bound', result.data[0].min);
           this.$store.commit('set_high_bound', result.data[0].max);
           this.$store.commit('set_current_block', result.data[0].min);
+          this.$store.commit('queryTxSummary',  result.data[0].min);
+          this.$store.commit('queryBlockSummary',  result.data[0].min);
         })
         .catch(error => {
           console.error(error);
@@ -67,13 +71,15 @@ export default {
     },
   },
   
-  watch: {
-    current_block: (new_block) => {
-      if( new_block >= this.$store.state.LOW_BOUND_BLOCK && new_block <= this.$store.state.HIGH_BOUND_BLOCK ) {
-        this.$store.commit('set_current_block', new_block);
-      }
-    }
-  }
+  // watch: {
+  //   current_block: (new_block) => {
+  //     console.log(new_block)
+  //
+  //     if( new_block >= this.$store.state.LOW_BOUND_BLOCK && new_block <= this.$store.state.HIGH_BOUND_BLOCK ) {
+  //       this.$store.commit('set_current_block', new_block);
+  //     }
+  //   }
+  // }
 }
 </script>
 
@@ -87,7 +93,7 @@ export default {
   border: solid;
 }
 
-#Block-view {
+Block-view {
   position: absolute;
   top: 200px;
   left: 823px;

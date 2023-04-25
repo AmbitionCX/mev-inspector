@@ -138,6 +138,7 @@ const query_mevboost_eth_data = async (block_number) => {
     format: format,
   });
   const dataset = await resultSet.json();
+
   return dataset;
 }
 

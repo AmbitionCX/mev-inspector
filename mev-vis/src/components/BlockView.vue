@@ -11,38 +11,33 @@
     </div>
   </div>
   <div class="container">
-    <div class="main-block">
-      <div v-for="(item, index) in currentBlocks" :key="index" class="small-block" :style="{ background: item.color }">
-        <span class="tooltip">{{ item.text }}</span>
-      </div>
-    </div>
+      <svg ref="svg" style="margin-left: 240px;"></svg>
   </div>
 </template>
-
 <script>
 import axios from "axios";
+import * as d3 from 'd3';
+
 export default {
-  props: {
-    block_summary: {
-      required: true,
-    }
-  },
   data() {
     return {
       currentIndex: 0,
       blockCount: 10,
-      blocksPerPage: 128,
       blocks: [],
-      txn:[1],
+      blockSize: 20, // 小方块边长
+      blockMargin: 2, // 小方块间距
     };
   },
   created() {
-    this.$store.commit('setCurrentSelectedBlock', JSON.parse(localStorage.getItem('current_selected_block')))
+    this.$store.commit('set_current_block', JSON.parse(localStorage.getItem('current_selected_block')));
+    this.$store.commit('queryTxSummary', JSON.parse(localStorage.getItem('current_tx_summary')));
+    this.$store.commit('queryBlockSummary', JSON.parse(localStorage.getItem('current_block_summary')));
+    this.$store.state.current_block_summary[0].tx_amount
+    // 加载tx——summery
   },
   mounted() {
-    this.tx();
     this.generateBlocks();
-    this.txn
+    this.drawBlocks();
   },
 
    watch: {
@@ -53,88 +48,100 @@ export default {
       },
       deep: true,
     },
-  },
-  computed: {
-    currentBlocks() {
-      const start = 0;
-      const end = this.txn.length;
-      return this.blocks.slice(start, end);
-    },
+    //  '$store.state.current_tx_summary': {
+    //   handler(newValue) {
+    //     localStorage.setItem('current_tx_summary', newValue);
+    //   },
+    //   deep: true,
+    // },
+    //  '$store.state.current_block_summary': {
+    //   handler(newValue) {
+    //     localStorage.setItem('current_block_summary', newValue);
+    //   },
+    //   deep: true,
+    // },
+
   },
 
   methods: {
-     tx() {
-       const block_number = this.$store.state.current_selected_block
-       console.log(block_number)
-       const path = `http://localhost:7070/tx/${block_number}`;
-      // `/arbitrages/${block_number}`
-       axios
-         .get(path)
-         .then(result => {
-          this.txn = result.data;
-          this.generateBlocks(this.txn);
-         })
-         .catch(error => {
-           console.error(error);
-         });
-
-    },
-    generateBlocks(txn) {
-      for (let i = 0; i < txn.length; i++) {
-        const color1 = this.getRandomColor();
-        const color2 = this.getRandomColor();
-        this.blocks.push({
-          color: `linear-gradient(45deg, ${color1}, ${color2})`,
-          text: txn[i],
-        }
-        );
+    generateBlocks() {
+      console.log("cre")
+      console.log(this.$store.state.current_selected_block)
+      console.log(this.$store.state.current_block_summary[0].tx_amount)
+      for (let i = 0; i < this.$store.state.current_block_summary[0].tx_amount; i++) {
+        const color = '#' + Math.floor(Math.random() * 16777215).toString(16); // 随机生成颜色
+        const data = this.$store.state.current_tx_summary[i]; // 随机生成数据
+        this.blocks.push({ color, data });
       }
-
     },
-
-    getRandomColor() {
-      const letters = "0123456789ABCDEF";
-      let color = "#";
-      for (let i = 0; i < 6; i++) {
-        color += letters[Math.floor(Math.random() * 16)];
-      }
-      return color;
+ drawBlocks() {
+      console.log("draw")
+      const svg = d3.select(this.$refs.svg);
+      svg.attr('width', (this.blockSize + this.blockMargin) * this.blockCount);
+      svg.attr('height', (this.blockSize + this.blockMargin) * Math.ceil(this.blocks.length / this.blockCount));
+      svg.attr('x', 100);
+      const blocks = svg.selectAll('rect')
+        .data(this.blocks)
+        .enter()
+        .append('rect')
+        .attr('x', (d, i) => i % this.blockCount * (this.blockSize + this.blockMargin))
+        .attr('y', (d, i) => Math.floor(i / this.blockCount) * (this.blockSize + this.blockMargin))
+        .attr('width', this.blockSize)
+        .attr('height', this.blockSize)
+        .attr('fill', d => d.color);
+        blocks.on('mouseover', function(event,  d) {
+          d3.select(this)
+            .append('title')
+            .text(JSON.stringify(d.data))
+            .style('opacity', 1);
+        }).on('mouseout', function(d) {
+          d3.select(this)
+            .select('title')
+            .remove();
+        });
     },
-
     moveLeft() {
-      // console.log(this.currentIndex)
-
       const d =this.$store.state.current_selected_block-1
       if (d >=12914944) {
         this.$store.commit('set_current_block',  d)
-        location.reload();
+        this.blocks = []
+        const svg = d3.select(this.$refs.svg);
+        svg.html("");
+        this.generateBlocks()
+        this.drawBlocks()
+
      }
       else {
         this.$store.commit('set_current_block',  12914944)
-        location.reload();
+
       }
 
 
     },
-
+    clearBlocks() {
+      d3.selectAll("rect")
+          .transition()
+          .duration(300)
+          .attr("display", "none")
+          .remove();
+    },
     moveRight() {
-      // console.log("moveright")
-      // console.log(this.currentIndex)
       const d =this.$store.state.current_selected_block+1
       if (d <=12930000) {
         this.$store.commit('set_current_block',  d)
-        location.reload();
+        this.blocks = []
+        const svg = d3.select(this.$refs.svg);
+        svg.html("");
+        this.generateBlocks()
+        this.drawBlocks()
      }
     },
-
   },
-
-
 
 };
 </script>
 
-<style>
+<style scoped>
 .container1 {
   position: relative;
   display: flex;
@@ -149,22 +156,23 @@ export default {
     display: inline-block;
   }
 .container {
-  position: relative;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  height: 500px;
-  z-index: 10;
+  position: center;
+  width: 500px;
+  height: 100%;
+  left: 10%;
 }
 
 .main-block {
   display: flex;
   flex-wrap: wrap;
-  width: 30%;
+  width: 80%;
   height: 100%;
   top: 0px;
 }
-
+rect {
+  transition: transform 350ms;
+  transition-timing-function: cubic-bezier(0.1, 0.57, 0.1, 1);
+}
 .small-block {
   display: flex;
   flex-wrap: wrap;
