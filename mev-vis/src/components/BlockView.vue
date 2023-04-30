@@ -67,11 +67,6 @@ export default {
 
   methods: {
     generateBlocks() {
-
-      // for (let i = 0; i < this.$store.state.current_block_summary[0].tx_amount; i++) {
-      //   const color = '#' + Math.floor(Math.random() * 16777215).toString(16); // 随机生成颜色
-      //   const data = this.$store.state.current_tx_summary[i]; // 随机生成数据
-      //   this.blocks.push({ color, data });
        const txAmount = this.$store.state.current_block_summary[0].tx_amount; // 获取交易数量
        for (let i = 0; i < txAmount; i++) {
         const data = this.$store.state.current_tx_summary[i]; // 获取交易数据
