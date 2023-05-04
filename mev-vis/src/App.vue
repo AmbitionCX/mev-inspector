@@ -2,28 +2,28 @@
   <div class="header noselect">
     <h1 class="logo" id="logo">MEV Inspector</h1>
     <div class="filter" id="filter">
-      <el-input v-model="input" placeholder="Block Number"/>
+<!--      <el-input v-model="input" placeholder="Block Number" @input.native="getSelectedBlock" @keyup.enter="getSelectedBlock"/>-->
+      <input type="text" v-model="current_block" placeholder="Block Number(12914944~12930000)" class="search-box" @change="getSelectedBlock">
     </div>
+
   </div>
   <div>
-<!--    <overview />-->
+    <overview />
     <blockview />
-<!--    <transactionview />-->
+
+    <Transactionview />
 <!--    <selector />-->
 <!--    <recorder />-->
-    <p>{{ this.$store.state.current_selected_block }}</p>
-    <p>{{ this.$store.state.HIGH_BOUND_BLOCK }}</p>
-    <p>{{ this.$store.state.LOW_BOUND_BLOCK }}</p>
-    <p>{{ this.$store.state.current_block_summary[0].tx_amount }}</p>
-    <p>{{ this.$store.state.current_tx_summary }}</p>
+
   </div>
 </template>
+
 <script>
 import axios from 'axios'
 
 import overview from './components/OverView.vue';
 import blockview from './components/BlockView.vue';
-import transactionview from './components/TransactionView.vue';
+import Transactionview from './components/TransactionView.vue';
 import selector from './components/Selector.vue';
 import recorder from './components/Recorder.vue';
 
@@ -33,14 +33,14 @@ export default {
   components: {
     overview,
     blockview,
-    transactionview,
+    Transactionview,
     selector,
     recorder
   },
 
   data() {
     return {
-      current_block: 0,
+      current_block: '',
       current_arbitrages: []
     }
   },
@@ -50,11 +50,23 @@ export default {
   },
 
   mounted() {
-    this.current_block = this.$store.state.current_selected_block
+    // this.current_block = this.$store.state.current_selected_block
   },
 
   methods: {
+    getSelectedBlock() {
+        // if(isNaN(this.input)) {
+        //   return;
+        // }
+        // const input_block = parseInt(this.input);
+        if(this.current_block >= this.$store.state.LOW_BOUND_BLOCK && this.current_block <= this.$store.state.HIGH_BOUND_BLOCK) {
+          this.$store.commit('set_current_block', this.current_block);
+          this.current_block = ''
+        }else{
+          return;}
+      },
     getBlockBounds() {
+
       const path = 'http://localhost:7070/get_block_bounds';
       axios
         .get(path)
@@ -62,6 +74,7 @@ export default {
           this.$store.commit('set_low_bound', result.data[0].min);
           this.$store.commit('set_high_bound', result.data[0].max);
           this.$store.commit('set_current_block', result.data[0].min);
+          this.$store.commit('set_current_tx', result.data[0].min);
           this.$store.commit('queryTxSummary',  result.data[0].min);
           this.$store.commit('queryBlockSummary',  result.data[0].min);
         })
@@ -104,7 +117,7 @@ Block-view {
   border: solid;
 }
 
-#Transaction-view {
+Transaction-view {
   position: absolute;
   top: 335px;
   left: 5px;
@@ -161,5 +174,9 @@ Block-view {
   border-bottom: 0px solid #ffffff;
   z-index: 98;
   text-decoration: inherit;
+}
+.search-box {
+  width: 300px;
+  font-size: 16px;
 }
 </style>
