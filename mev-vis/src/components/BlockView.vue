@@ -29,10 +29,6 @@ export default {
   },
   created() {
     this.$store.commit('set_current_block', JSON.parse(localStorage.getItem('current_selected_block')));
-    // this.$store.commit('queryTxSummary', JSON.parse(localStorage.getItem('current_selected_block')));
-    // this.$store.commit('queryBlockSummary', JSON.parse(localStorage.getItem('current_selected_block')));
-
-    // 加载tx——summery
   },
  mounted() {
   setTimeout(() => {
@@ -43,13 +39,7 @@ export default {
 
    watch: {
     // Whenever `current_selected_block` changes, save it to the local storage
-    '$store.state.current_selected_block': {
-      handler(newValue) {
-        localStorage.setItem('current_selected_block', newValue);
-      },
-      deep: true,
 
-    },
      '$store.state.current_tx_summary': {
       handler(newValue) {
         localStorage.setItem('current_tx_summary', newValue);
@@ -63,29 +53,81 @@ export default {
       deep: true,
     },
 
+    '$store.state.current_selected_block': function() {
+       const svg = d3.select(this.$refs.svg);
+      svg.html("");
+       this.blocks = [];
+      setTimeout(() => {
+    this.generateBlocks();
+    this.drawBlocks();
+  }, 300);
+
+  },
+     '$store.state.recordarb': function() {
+       const svg = d3.select(this.$refs.svg);
+      svg.html("");
+       this.blocks = [];
+      setTimeout(() => {
+    this.generateBlocks();
+    this.drawBlocks();
+  }, 300);
+
+  },
+    '$store.state.recordliq': function() {
+       const svg = d3.select(this.$refs.svg);
+      svg.html("");
+       this.blocks = [];
+      setTimeout(() => {
+    this.generateBlocks();
+    this.drawBlocks();
+  }, 300);
+
+  },
+  '$store.state.recordsand': function() {
+       console.log("sandwich")
+       const svg = d3.select(this.$refs.svg);
+      svg.html("");
+       this.blocks = [];
+      setTimeout(() => {
+    this.generateBlocks();
+    this.drawBlocks();
+  }, 300);
+
+  },
+
+
   },
 
   methods: {
     generateBlocks() {
        const txAmount = this.$store.state.current_block_summary[0].tx_amount; // 获取交易数量
        for (let i = 0; i < txAmount; i++) {
-        const data = this.$store.state.current_tx_summary[i]; // 获取交易数据
-        const sandwiches = this.$store.state.current_sandwiches.find(tx => tx.frontrun_swap_transaction_hash === data.tx_hash||tx.backrun_swap_transaction_hash === data.tx_hash);
-        const liquidations = this.$store.state.current_liquidations.find(tx => tx.transaction_hash === data.tx_hash);
-        const arbitrages = this.$store.state.current_arbitrages.find(tx => tx.transaction_hash === data.tx_hash);
-        if(sandwiches||liquidations||arbitrages){
-          const lightness = 10
-          const color = `hsl(210, 90%, ${lightness}%)`; // 生成渐变色
-          this.blocks.push({ color, data });
-        }else{
-          const lightness = Math.max(20, 90 - (data.paid_fee/2000000)  ); // 计算亮度（使用 value 值作为参考）
-        const color = `hsl(210, 90%, ${lightness}%)`; // 生成渐变色
-        this.blocks.push({ color, data });}
-  }
-
+         const data = this.$store.state.current_tx_summary[i]; // 获取交易数据
+         const sandwiches = this.$store.state.current_sandwiches.find(tx => tx.frontrun_swap_transaction_hash === data.tx_hash || tx.backrun_swap_transaction_hash === data.tx_hash);
+         const liquidations = this.$store.state.current_liquidations.find(tx => tx.transaction_hash === data.tx_hash);
+         const arbitrages = this.$store.state.current_arbitrages.find(tx => tx.transaction_hash === data.tx_hash);
+         if (sandwiches ) {
+           const lightness = 10
+           const color = `hsl(210, 90%, ${lightness}%)`; // 生成渐变色
+           this.blocks.push({color, data});
+         } else {
+           if (liquidations) {
+             const color = 'red';
+             this.blocks.push({color, data});
+           } else {
+             if (arbitrages) {
+               const color = 'green';
+               this.blocks.push({color, data});
+             } else {
+               const lightness = Math.max(20, 90 - (data.paid_fee / 2000000)); // 计算亮度（使用 value 值作为参考）
+               const color = `hsl(210, 90%, ${lightness}%)`; // 生成渐变色
+               this.blocks.push({color, data});
+             }
+           }
+         }
+       }
     },
  drawBlocks() {
-
       const svg = d3.select(this.$refs.svg);
       svg.attr('width', (this.blockSize + this.blockMargin) * this.blockCount);
       svg.attr('height', (this.blockSize + this.blockMargin) * Math.ceil(this.blocks.length / this.blockCount));
@@ -102,10 +144,24 @@ export default {
         .on('click', (function(event, d) {
           this.$store.commit('set_current_tx',  d.data);
           }).bind(this));
+        blocks.filter(d => this.$store.state.recordsand.some(item => item.tx_hash === d.data.tx_hash))
+          .attr('stroke', 'black')
+          .attr('stroke-width', 0.8);
+        blocks.filter(d => this.$store.state.recordarb.some(item => item.tx_hash === d.data.tx_hash))
+          .attr('stroke', 'green')
+          .attr('stroke-width', 0.8);
+        blocks.filter(d => this.$store.state.recordliq.some(item => item.tx_hash === d.data.tx_hash))
+          .attr('stroke', 'red')
+          .attr('stroke-width', 0.8);
         blocks.on('mouseover', function(event,  d) {
+          var table = '<table>';
+          for (var key in d.data) {
+            table += '<tr><th>' + key + '</th><td>:' + d.data[key] + '</td></tr>\n';
+          }
+          table += '</table>';
           d3.select(this)
             .append('title')
-            .text(JSON.stringify(d.data))
+            .html(table);
           d3.select(this)
             .transition()
             .attr('height', 11)
@@ -126,13 +182,6 @@ export default {
       const d =this.$store.state.current_selected_block-1
       if (d >=12914944) {
         this.$store.commit('set_current_block',  d)
-        this.blocks = []
-        const svg = d3.select(this.$refs.svg);
-        svg.html("");
-         setTimeout(() => {
-    this.generateBlocks();
-    this.drawBlocks();
-  }, 300);
      }
       else {
         this.$store.commit('set_current_block',  12914944)
@@ -150,17 +199,7 @@ export default {
     moveRight() {
     const d = this.$store.state.current_selected_block + 1;
     if (d <= 12930000) {
-      const svg = d3.select(this.$refs.svg);
-      svg.html("");
       this.$store.commit('set_current_block', d);
-      this.$store.commit("queryBlockSummary", d);
-      this.$store.commit("queryTxSummary", d);
-      this.blocks = [];
-      setTimeout(() => {
-    this.generateBlocks();
-    this.drawBlocks();
-  }, 300);
-
 }
 },
   },

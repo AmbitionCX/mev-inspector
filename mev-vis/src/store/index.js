@@ -12,9 +12,13 @@ export default createStore({
             current_liquidations: [],
             current_nft_trades: [],
             current_block_summary: [],
+            temp_block_summary: [],
             current_tx_summary: [],
             current_mevboost_data: [],
             current_tx:[],
+            recordsand:[],
+            recordarb:[],
+            recordliq:[],
         }
     },
 
@@ -38,11 +42,21 @@ export default createStore({
           state.current_selected_block = payload;
           localStorage.setItem('current_selected_block', JSON.stringify(state.current_selected_block));
 },
+        set_record_sand(state,payload){
+            state.recordsand = payload;
+            localStorage.setItem('recordsand', JSON.stringify(state.recordsand));
+        },
+        set_record_arb(state,payload){
+            state.recordarb = payload;
+            localStorage.setItem('recordarb', JSON.stringify(state.recordsand));
+        },
+        set_record_liq(state,payload){
+            state.recordliq = payload;
+            localStorage.setItem('recordliq', JSON.stringify(state.recordsand));
+        },
         set_current_tx(state,payload){
-
             state.current_tx = payload;
             localStorage.setItem('current_tx', JSON.stringify(state.current_tx));
-
         },
         queryArbitrages: function (state, payload) {
             const path = 'http://localhost:7070/arbitrages';
@@ -114,7 +128,6 @@ export default createStore({
 
         queryBlockSummary: function (state, payload) {
             const path = 'http://localhost:7070/block_summary';
-
             axios
                 .get(path, {
                     params: {
@@ -124,7 +137,24 @@ export default createStore({
                 .then(result => {
                     state.current_block_summary = result.data;
                     localStorage.setItem('current_block_summary', JSON.stringify(state.current_block_summary))
-                    // console.log(2)
+
+                })
+                .catch(error => {
+                    console.error(error);
+                });
+        },
+        queryBlockSummarytemp: function (state, payload) {
+            const path = 'http://localhost:7070/block_summary';
+            axios
+                .get(path, {
+
+                    params: {
+                        block_number: payload
+                    }
+                })
+                .then(result => {
+                    state.temp_block_summary = result.data;
+                    localStorage.setItem('temp_block_summary', JSON.stringify(state.temp_block_summary))
                 })
                 .catch(error => {
                     console.error(error);

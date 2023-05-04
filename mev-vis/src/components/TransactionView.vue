@@ -1,8 +1,13 @@
 
 <template>
   <div id="Transaction-view">
+    <button @click="toggleButtonsand()">{{ buttonTexts[0] }}</button>
+    <br>
+    <button @click="toggleButtonarb()">{{ buttonTexts[1] }}</button>
+    <br>
+    <button @click="toggleButtonliq()">{{ buttonTexts[2] }}</button>
     <div class="radar-container">
-      <div ref="radar" class="radar-chart" style="width: 50%; height: 200px;"></div>
+      <div ref="radar" class="radar-chart" style="width: 50%; height: 400px;margin: 0 auto;"></div>
     </div>
   </div>
 </template>
@@ -11,6 +16,9 @@
 import * as echarts from 'echarts'
 
 export default {
+    data() {
+      return {buttonTexts: ['sandwiches', 'liquidations', 'arbitrages'],}
+  },
   computed: {
     radarData() {
       const GasPriceArr = this.$store.state.current_tx_summary.map(item => item.gas_price)
@@ -58,76 +66,132 @@ export default {
   watch: {
     '$store.state.current_tx': function() {
       this.drawRadarChart();
+      this.fuzhi();
     },
   },
   methods: {
-    isClosedLoop() {
-      const currentTxSummaries = this.$store.state.current_tx_summary;
-      const firstTx = this.$store.state.current_tx; // 获取第一笔交易
-      let currentSender = firstTx.from; // 当前交易的发起者
-      let currentReceiver = firstTx.to; // 当前交易的接收者
-      const closedLoopTx = [firstTx]; // 闭合交易的数组，包含第一笔交易
-
-      while (currentReceiver !== firstTx.from) {
-
-        const nextTx = currentTxSummaries.find(
-          tx => tx.from === currentReceiver
-        );
-
-        if (!nextTx) {
-          // 如果找不到下一笔交易，则说明交易不是闭环的
-          console.log("No closed loop");
-          return false;
+      toggleButtonsand() {
+        const data = this.$store.state.current_tx
+        const sandwiches1 = this.$store.state.recordsand.find(tx => tx.tx_hash === data.tx_hash);
+        if (sandwiches1) {
+          const data = this.$store.state.current_tx
+          this.buttonTexts[0] = 'sandwiches';
+          const a = this.$store.state.recordsand.filter(item => item.tx_hash != data.tx_hash);
+          this.$store.commit('set_record_sand',  a)
+        } else {
+          const data = this.$store.state.current_tx
+          const a = this.$store.state.recordsand.slice()
+          a.push(data)
+          console.log(a.length)
+          console.log(this.$store.state.recordsand.length)
+          this.$store.commit('set_record_sand',  a)
+          this.buttonTexts[0] = 'remove' ;
+          console.log(this.$store.state.recordsand)
         }
+    },
+    toggleButtonarb() {
+        const data = this.$store.state.current_tx
+        const arbitrages1 = this.$store.state.recordarb.find(tx => tx.tx_hash === data.tx_hash);
+        if (arbitrages1) {
+          const data = this.$store.state.current_tx
+          this.buttonTexts[1] = 'arbitrages';
+          const a = this.$store.state.recordarb.filter(item => item.tx_hash != data.tx_hash);
+          this.$store.commit('set_record_arb',  a)
+        } else {
+          const data = this.$store.state.current_tx
+          const a = this.$store.state.recordarb.slice()
+          a.push(data)
+          this.$store.commit('set_record_arb',  a)
+          this.buttonTexts[1] = 'remove' ;
+        }
+    },
+    toggleButtonliq() {
+        const data = this.$store.state.current_tx
+        const liq = this.$store.state.recordliq.find(tx => tx.tx_hash === data.tx_hash);
+        if (liq) {
+          const data = this.$store.state.current_tx
+          this.buttonTexts[2] = 'liquidations';
+          const a = this.$store.state.recordliq.filter(item => item.tx_hash != data.tx_hash);
+          this.$store.commit('set_record_liq',  a)
+        } else {
+          const data = this.$store.state.current_tx
+          const a = this.$store.state.recordliq.slice()
+          a.push(data)
+          this.$store.commit('set_record_liq',  a)
+          this.buttonTexts[2] = 'remove' ;
+        }
+    },
 
-      // 更新当前发起者、接收者和交易索引
-      currentSender = nextTx.from;
-      currentReceiver = nextTx.to;
-
-      // 将下一笔交易添加到闭合交易中
-      closedLoopTx.push(nextTx);
-    }
-        console.log("Closed loop detected");
-        closedLoopTx.forEach(tx => {
-          console.log(`TX hash: ${tx.hash}`);
-          console.log(`From: ${tx.from}`);
-          console.log(`To: ${tx.to}`);
-          console.log(`Value: ${tx.value}`);
-          console.log(`Timestamp: ${tx.timestamp}\n`);
-      });
-  return true;
-},
-    islike(){
-      const currentTxSummaries = this.$store.state.current_tx_summary;
-      const firstTx = this.$store.state.current_tx;
-
-
+     fuzhi(){const data = this.$store.state.current_tx
+      const sandwiches1 = this.$store.state.recordsand.find(tx => tx.tx_hash === data.tx_hash);
+      if (sandwiches1) {this.buttonTexts[0]='remove'}else{this.buttonTexts[0]='sandwiches'}
+      const arbitrages1 = this.$store.state.recordarb.find(tx => tx.tx_hash === data.tx_hash);
+      if (arbitrages1) {this.buttonTexts[1]='remove'}else{this.buttonTexts[1]='arbitrages'}
+      const liquidations1 = this.$store.state.recordliq.find(tx => tx.tx_hash === data.tx_hash);
+      if (liquidations1) {this.buttonTexts[2]='remove'}else{this.buttonTexts[2]='liquidations'}
     },
     drawRadarChart() {
-      this.isClosedLoop()
-      if(this.$store.state.current_sandwiches.length!=0){
-        const sandwiches = this.$store.state.current_sandwiches.find(tx => tx.frontrun_swap_transaction_hash === this.$store.state.current_tx.tx_hash||tx.backrun_swap_transaction_hash === this.$store.state.current_tx.tx_hash);
-        if(sandwiches){
-        }
-      }
-
-      if(this.$store.state.current_liquidations!=[]){
-        const liquidations = this.$store.state.current_liquidations.find(tx => tx.transaction_hash === this.$store.state.current_tx.tx_hash);
-        if(liquidations){
-        }
-      }
-       if(this.$store.state.current_arbitrages!=[]){
-         const arbitrages = this.$store.state.current_arbitrages.find(tx => tx.transaction_hash === this.$store.state.current_tx.tx_hash);
-        if(arbitrages){
-        }
-      }
       const radarChart = echarts.init(this.$refs.radar);
       const {
         legendData,
         indicator,
         seriesData
       } = this.radarData;
-
+      const front = this.$store.state.current_sandwiches.find(
+            tx => tx.frontrun_swap_transaction_hash === this.$store.state.current_tx.tx_hash
+                );
+        if(front){
+          seriesData[0].name = 'front'
+          console.log(front)
+          const back = this.$store.state.current_tx_summary.find(
+             tx => tx.tx_hash === front.backrun_swap_transaction_hash
+          )
+          console.log(back)
+          const {
+            gas_price,
+            gas_used,
+            priority_fee_per_gas,
+            max_fee_per_gas,
+            paid_fee,
+            burnt_fee,
+          } = back;
+          seriesData.push(
+              {
+            value: [gas_price, gas_used, priority_fee_per_gas, max_fee_per_gas, paid_fee, burnt_fee],
+            name: 'back',
+          },
+          )
+        }
+        const back = this.$store.state.current_sandwiches.find(
+            tx => tx.backrun_swap_transaction_hash === this.$store.state.current_tx.tx_hash
+                );
+        if(back){
+          seriesData[0].name = 'back'
+          const front = this.$store.state.current_tx_summary.find(
+             tx => tx.tx_hash === back.frontrun_swap_transaction_hash
+          )
+          console.log(back)
+          const {
+            gas_price,
+            gas_used,
+            priority_fee_per_gas,
+            max_fee_per_gas,
+            paid_fee,
+            burnt_fee,
+          } = front;
+          seriesData.push(
+              {
+            value: [gas_price, gas_used, priority_fee_per_gas, max_fee_per_gas, paid_fee, burnt_fee],
+            name: 'front',
+          },
+          )
+        }
+        const liquidations = this.$store.state.current_liquidations.find(tx => tx.transaction_hash === this.$store.state.current_tx.tx_hash);
+        if(liquidations){seriesData[0].name = 'liquidations'
+        }
+      const arbitrages = this.$store.state.current_arbitrages.find(tx => tx.transaction_hash === this.$store.state.current_tx.tx_hash);
+        if(arbitrages){seriesData[0].name = 'arbitrages'
+        }
       const option = {
         grid: {
           containLabel: true, // 将包括坐标轴的标签在内的图形绘制在容器的内部
