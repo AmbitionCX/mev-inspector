@@ -2,14 +2,14 @@
 // block from 12914944 to 12950000
 const postgresql = require('./postgresql');
 const clickhouse = require('./clickhouse');
-const {sql} = require('@databases/pg');
+const { sql } = require('@databases/pg');
 const { ethers } = require("ethers");
 require('dotenv').config();
 
 const geth_endpoint = process.env.GETH_ENDPOINT;
 const provider = new ethers.providers.JsonRpcProvider(geth_endpoint);
 
-const query_blocks = async ( block_number_i ) => {
+const query_blocks = async (block_number_i) => {
 
   // block info
   let block_data = await provider.getBlock(block_number_i);
@@ -42,9 +42,24 @@ const query_blocks = async ( block_number_i ) => {
   }
 
   let sandwiches = await postgresql.query(sql`
-    SELECT block_number, sandwicher_address, frontrun_swap_transaction_hash, backrun_swap_transaction_hash, profit_token_address, profit_amount from sandwiches where block_number = ${block_number_i};
+    SELECT id, block_number, sandwicher_address, frontrun_swap_transaction_hash, backrun_swap_transaction_hash, profit_token_address, profit_amount from sandwiches where block_number = ${block_number_i};
   `);
   let sandwich_amount = sandwiches.length;
+
+  for (let i = 0; i < sandwich_amount; i++) {
+    let item = sandwiches[i];
+    let tx_hash = await postgresql.query(sql`
+      SELECT transaction_hash from sandwiched_swaps where sandwich_id = ${item.id};
+      `);
+    
+    let sandwiched_tx_hash = [];
+    for (let data of tx_hash){
+      sandwiched_tx_hash.push(data.transaction_hash)
+    }
+
+    delete sandwiches[i].id;
+    sandwiches[i].sandwiched_transaction_hash = sandwiched_tx_hash;
+  }
 
   if (sandwich_amount != 0){
     await clickhouse.insert({
@@ -92,7 +107,7 @@ const query_blocks = async ( block_number_i ) => {
   let tx_summary = [];
   let paid_fees = 0;
   for( let tx_hash of transactions ) {
-    
+console.log(tx_hash);
     let tx_receipt = await provider.getTransactionReceipt(tx_hash);
     let tx_rawdata = await provider.getTransaction(tx_hash);
     let paid_fee = 0;
@@ -111,7 +126,7 @@ const query_blocks = async ( block_number_i ) => {
     let gas_used = tx_receipt.gasUsed.toNumber();
     let value = tx_rawdata.value.toString();
 
-    
+
     let priority_fee_per_gas = "0";
     if ( tx_rawdata.hasOwnProperty('maxPriorityFeePerGas') ){
       priority_fee_per_gas = parseInt(tx_rawdata.maxPriorityFeePerGas.toNumber() / 10 ** 9);
@@ -184,11 +199,11 @@ const query_blocks = async ( block_number_i ) => {
 // 12914944
 // 16852488
 const execute = async (start, end) => {
-  for (let i = start; i < end; i++){
+  for (let i = start; i < end; i++) {
     await query_blocks(i);
     console.log("finished block: ", i);
     await new Promise(r => setTimeout(r, 1000));
-  }  
+  }
 }
 
-execute(12914946, 12920000);
+execute(12914944, 12920000);
