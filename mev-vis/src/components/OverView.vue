@@ -70,7 +70,6 @@ export default {
       );
       setTimeout(() => {
         this.blocks.sort((a, b) => a.text - b.text);
-
       }, 200);
       setTimeout(() => {
         this.drawBlocks();

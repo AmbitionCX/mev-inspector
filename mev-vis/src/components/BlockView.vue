@@ -1,19 +1,16 @@
 <template>
   <div id="Blockview">
     <div class="panel-header">Block View</div>
-    <el-icon>
-      <ArrowLeftBold @click="moveLeft" />
-    </el-icon>
-    <el-icon class="arrow-right">
-      <ArrowRightBold @click="moveRight" />
-    </el-icon>
+    <div class="container1">
     <div class="block-container">
-      <p>BLOCK&nbsp;{{ this.$store.state.current_block_summary }}</p>
+    <p>BLOCK&nbsp;{{ this.$store.state.current_selected_block }}</p>
     </div>
-    <div class="container">
-      <svg ref="svg" style="margin-left: 240px;"></svg>
-    </div>
-
+    <button class="arrow-left" @click="moveLeft">
+    </button>
+    <button class="arrow-right" @click="moveRight">
+    </button>
+  </div>
+    <svg ref="svg" style="margin: 0 auto;"></svg>
   </div>
 </template>
 <script>
@@ -215,16 +212,15 @@ export default {
   display: flex;
   justify-content: center;
   align-items: center;
-  width: 100px;
-  height: 120px;
+
 
 }
 
 .block-container {
   background-color: hsl(210, 90%, 80%);
   padding: 50px;
-  width: 100px;
-  display: inline-block;
+  width: 220px;
+  display: flex;
 }
 
 .container {
@@ -246,21 +242,9 @@ rect {
   transition-timing-function: cubic-bezier(0.1, 0.57, 0.1, 1);
 }
 
-.small-block {
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: center;
-  align-items: center;
-  width: calc(8%);
-  height: calc(7%);
-  margin: 1px;
-  transition: filter 0.2s ease;
-  position: relative;
-  border-radius: 50%;
-  z-index: 1;
-}
 
-.arrow-left:before,
+
+
 .arrow-right:after {
   content: "";
   display: block;
@@ -272,7 +256,7 @@ rect {
 
 .arrow-left:before {
   transform: rotate(45deg);
-  left: 200px;
+  left: 2px;
   top: 16px;
   border-top-left-radius: 2px;
   border-top-right-radius: 2px;
