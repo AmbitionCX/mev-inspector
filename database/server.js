@@ -159,6 +159,23 @@ const get_block_bounds = async () => {
   return dataset;
 }
 
+app.get("/get_mev_amount", async (request, response) => {
+  let result_data = await get_mev_amount()
+  response.status(200).send(result_data);
+});
+
+const get_mev_amount = async () => {
+  const query = 'select arbitrages, sandwiches, liquidations, arbitrages + sandwiches + liquidations as "total" from mev.block_summary'
+  const format = 'JSONEachRow'
+
+  const resultSet = await clickhouse.query({
+    query: query,
+    format: format,
+  });
+  const dataset = await resultSet.json();
+  return dataset;
+}
+
 app.listen(port, () => {
   console.log(`Server is running on port ${port}.`);
 });

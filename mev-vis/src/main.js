@@ -6,7 +6,9 @@ import * as ElementPlusIconsVue from '@element-plus/icons-vue'
 import 'element-plus/dist/index.css'
 import './index.css'
 
-createApp(App).use(store).use(ElementPlus).mount('#app')
-for (const [key, component] of Object.entries(ElementPlusIconsVue)) {
+const app = createApp(App);
+for ( let [key, component] of Object.entries(ElementPlusIconsVue)) {
     app.component(key, component)
 }
+
+createApp(App).use(store).use(ElementPlus).mount('#app')
