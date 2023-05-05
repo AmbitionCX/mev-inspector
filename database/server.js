@@ -114,7 +114,6 @@ app.get("/tx_summary", async (request, response) => {
 const query_tx_summary = async (block_number) => {
   const query = `select * from mev.tx_summary where block_number=${block_number}`
   const format = 'JSONEachRow'
-
   const resultSet = await clickhouse.query({
     query: query,
     format: format,

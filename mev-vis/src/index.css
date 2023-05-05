@@ -8,10 +8,9 @@ html{
 body{
     font-family: 'Roboto', sans-serif;
     color: #5f6872;
-    font-size: 12px;
+    font-size: 16px;
     overflow-x: hidden;
     height: 100%;
-    position: relative;
 }
 .header{
     width: 100%;
@@ -32,7 +31,6 @@ body{
     float: left;
 }
 .header .filter{
-    position: absolute;
     font-size: 16px;
     float: right;
     right: 0;
@@ -42,9 +40,6 @@ body{
 .header .filter *{
     vertical-align: middle;
 }
-#bottomRow, #header {
-    position: relative;
-}
 .noselect {
     -webkit-touch-callout: none; /* iOS Safari */
     -webkit-user-select: none; /* Chrome/Safari/Opera */
@@ -52,4 +47,31 @@ body{
     -moz-user-select: none; /* Firefox */
     -ms-user-select: none; /* Internet Explorer/Edge */
     user-select: none; /* Non-prefixed version, currently not supported by any browser */
+}
+#Overview,
+#Blockview,
+#Transactionview {
+  padding: 2px;
+  margin: 2px;
+  background: #ffffff;
+  border-radius: 4px;
+  border: 1px solid #6fa1b4;
+  box-shadow: 0 1px 2px rgba(26 26 26 0.2);
+}
+
+.panel-header {
+  width: -moz-fit-content;
+  width: fit-content;
+  padding: 0 8px;
+  line-height: 18px;
+  font-size: 12px;
+  background: #6fa1b4;
+  color: #fcfcfc;
+  display: flex;
+  font-weight: bold;
+  border-radius: 2px;
+  box-shadow: 0 1px 2px rgba(26 26 26 0.2);
+  z-index:2;
+  text-align: left;
+  text-decoration: inherit;
 }

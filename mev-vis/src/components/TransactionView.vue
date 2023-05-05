@@ -1,7 +1,6 @@
 <template>
-  <div id="Transaction-view">
+  <div id="Transactionview">
     <div class="panel-header">Transaction View</div>
-    <div class="panel-header-end"></div>
     <svg>
 
     </svg>

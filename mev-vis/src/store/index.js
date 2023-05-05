@@ -27,11 +27,10 @@ export default createStore({
             localStorage.setItem('LOW_BOUND_BLOCK', JSON.stringify(state.LOW_BOUND_BLOCK))
         },
         // on the state of current_selected_block changes
-        // read local storage
-        // var item = JSON.parse(localStorage.getItem('itemKey'));
         set_current_block(state, payload) {
             state.current_selected_block = payload;
-            localStorage.setItem('current_selected_block', JSON.stringify(state.current_selected_block));
+            localStorage.setItem('current_selected_block', JSON.stringify(payload));
+            
             this.commit("queryArbitrages", payload);
             this.commit("querySandwiches", payload);
             this.commit("queryLiquidations", payload);
@@ -51,7 +50,7 @@ export default createStore({
                 })
                 .then(result => {
                     state.current_arbitrages = result.data;
-                    localStorage.setItem('current_arbitrages', JSON.stringify(state.current_arbitrages))
+                    localStorage.setItem('current_arbitrages', JSON.stringify(result.data))
                 })
                 .catch(error => {
                     console.error(error);
@@ -68,7 +67,7 @@ export default createStore({
                 })
                 .then(result => {
                     state.current_sandwiches = result.data;
-                    localStorage.setItem('current_sandwiches', JSON.stringify(state.current_sandwiches))
+                    localStorage.setItem('current_sandwiches', JSON.stringify(result.data))
                 })
                 .catch(error => {
                     console.error(error);
@@ -85,7 +84,7 @@ export default createStore({
                 })
                 .then(result => {
                     state.current_liquidations = result.data;
-                    localStorage.setItem('current_liquidations', JSON.stringify(state.current_liquidations))
+                    localStorage.setItem('current_liquidations', JSON.stringify(result.data))
                 })
                 .catch(error => {
                     console.error(error);
@@ -102,7 +101,7 @@ export default createStore({
                 })
                 .then(result => {
                     state.current_nft_trades = result.data;
-                    localStorage.setItem('current_nft_trades', JSON.stringify(state.current_nft_trades))
+                    localStorage.setItem('current_nft_trades', JSON.stringify(result.data))
                 })
                 .catch(error => {
                     console.error(error);
@@ -119,7 +118,7 @@ export default createStore({
                 })
                 .then(result => {
                     state.current_block_summary = result.data;
-                    localStorage.setItem('current_block_summary', JSON.stringify(state.current_block_summary))
+                    localStorage.setItem('current_block_summary', JSON.stringify(result.data))
                 })
                 .catch(error => {
                     console.error(error);
@@ -136,7 +135,7 @@ export default createStore({
                 })
                 .then(result => {
                     state.current_tx_summary = result.data;
-                    localStorage.setItem('current_tx_summary', JSON.stringify(state.current_tx_summary))
+                    localStorage.setItem('current_tx_summary', JSON.stringify(result.data))
                 })
                 .catch(error => {
                     console.error(error);
@@ -153,7 +152,7 @@ export default createStore({
                 })
                 .then(result => {
                     state.current_mevboost_data = result.data;
-                    localStorage.setItem('current_mevboost_data', JSON.stringify(state.current_mevboost_data))
+                    localStorage.setItem('current_mevboost_data', JSON.stringify(result.data))
                 })
                 .catch(error => {
                     console.error(error);
@@ -162,26 +161,6 @@ export default createStore({
     },
 
     getters: {
-        arbitrages_length(state) {
-            return state.current_arbitrages.length;
-        },
-        sandwiches_length(state) {
-            return state.current_sandwiches.length;
-        },
-        liquidations_length(state) {
-            return state.current_liquidations.length;
-        },
-        nft_trades_length(state) {
-            return state.current_nft_trades.length;
-        },
-        block_summary_length(state) {
-            return state.current_block_summary.length;
-        },
-        tx_summary_length(state) {
-            return state.current_tx_summary.length;
-        },
-        mevboost_data_length(state) {
-            return state.current_mevboost_data.length;
-        }
+
     }
 })
