@@ -90,7 +90,6 @@ const query_nft_trades = async (block_number) => {
 
 // query block summary by block number
 app.get("/block_summary", async (request, response) => {
-  console.log("server")
   let result_data = await query_block_summary(request.query.block_number)
   response.status(200).send(result_data);
 });

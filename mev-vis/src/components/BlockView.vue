@@ -215,16 +215,15 @@ export default {
   display: flex;
   justify-content: center;
   align-items: center;
-  weight: 100px;
+  width: 100px;
   height: 120px;
 
 }
 
 .block-container {
   background-color: hsl(210, 90%, 80%);
-  ;
   padding: 50px;
-  weight: 100px;
+  width: 100px;
   display: inline-block;
 }
 
