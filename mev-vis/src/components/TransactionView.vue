@@ -253,7 +253,11 @@ export default {
 .radar-container {
   height: 500px;
 }
-
+  button {
+    border: 1px solid #ccc;
+    padding: 10px 15px;
+    margin-bottom: 1px;
+  }
 .radar-chart {
   height: 100%;
   width: 100%;

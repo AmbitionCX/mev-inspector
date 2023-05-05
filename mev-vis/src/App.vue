@@ -7,7 +7,7 @@
             <h1>MEV Inspector</h1>
           </div>
           <div class="filter">
-            <el-input v-model="input" size="default" placeholder="Block Number" class="search-box" @change="getSelectedBlock"/>
+            <input type="text" v-model="current_block" placeholder="Block Number" class="search-box" @change="getSelectedBlock"/>
           </div>
         </div>
       </el-header>

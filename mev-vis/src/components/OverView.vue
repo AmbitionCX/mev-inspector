@@ -33,7 +33,6 @@ export default {
   },
 
   methods: {
-
     generateBlocks() {
       this.blocks = []; // Clear the existing blocks
       const i = 0
@@ -53,7 +52,6 @@ export default {
   );
       setTimeout(() => {
         this.blocks.sort((a, b) => a.text - b.text);
-
       }, 200);
       setTimeout(() => {
         this.drawBlocks();
