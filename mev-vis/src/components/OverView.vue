@@ -1,9 +1,10 @@
 <template>
-  <div class="blockchain">
+  <div id="Overview">
     <div class="panel-header">Overview</div>
-    <div class="slider-container">
-      <input type="range" class="slider" min="1" max="5058" @mouseover="showData"  @mouseleave="hideData" v-model="sliderValue" />
-      <div v-if="showInfo" class="slider-info">{{ sliderValue1+ '~' +sliderValue2 }}</div>
+    <div class="slider-demo-block">
+      <span class="block-slider">Select block</span>
+      <el-slider class="slider" show-tooltip=false @mouseover="showData" @mouseleave="hideData" v-model="sliderValue" />
+      <div v-if="showInfo" class="slider-info">{{ sliderValue1 + '~' + sliderValue2 }}</div>
     </div>
     <svg ref="svg"></svg>
   </div>
@@ -20,7 +21,7 @@ export default {
   data() {
     return {
       showInfo: false,
-      sliderValue:0,
+      sliderValue: 0,
       currentPage: 0, // 当前页数
       blockSize: 20, // 小方块边长
       blockMargin: 2, // 小方块间距
@@ -28,8 +29,8 @@ export default {
       blocknum: 12930000 - 12914944 + 1,
       blocks: [], // 所有小方块的数据
       mev_amount: [],
-      sliderValue1:12914944,
-      sliderValue2:12914944+60,
+      sliderValue1: 12914944,
+      sliderValue2: 12914944 + 60,
     };
   },
 
@@ -38,12 +39,15 @@ export default {
   },
   mounted() {
     this.queryMevAmount();
-      setTimeout(() => {
-        this.generateBlocks();
-        this.drawBlocks(0,this.blockCount)
-      }, 300);
+    setTimeout(() => {
+      this.generateBlocks();
+      this.drawBlocks(0, this.blockCount)
+    }, 300);
   },
-
+  computed: {
+    low_bound() { return this.$store.state.LOW_BOUND_BLOCK },
+    high_bound() { return this.$store.state.HIGH_BOUND_BLOCK },
+  },
   methods: {
     showData() {
       this.showInfo = true;
@@ -156,16 +160,16 @@ export default {
       // this.drawBlocks();
     },
   },
-      watch: {
-      sliderValue(newValue) {
-        console.log(newValue)
-        this.clearBlocks();
-        const startIndex = parseInt(newValue);
-        const lastIndex = Math.min(startIndex + this.blockCount - 1,5058);
-        console.log(startIndex,lastIndex)
-        this.drawBlocks(startIndex, lastIndex);
-        this.sliderValue1 = startIndex+12914943
-        this.sliderValue2 = lastIndex+12914943
+  watch: {
+    sliderValue(newValue) {
+      console.log(newValue)
+      this.clearBlocks();
+      const startIndex = parseInt(newValue);
+      const lastIndex = Math.min(startIndex + this.blockCount - 1, 5058);
+      console.log(startIndex, lastIndex)
+      this.drawBlocks(startIndex, lastIndex);
+      this.sliderValue1 = startIndex + 12914943
+      this.sliderValue2 = lastIndex + 12914943
     },
   },
 };
@@ -176,13 +180,17 @@ export default {
   flex-direction: column;
   align-items: center;
 }
+
 .slider-container {
   max-width: 1000px;
   margin: auto;
 }
+
 .slider {
-  width: 200%; /* 设置滑块的宽度为父容器的宽度 */
+  width: 200%;
+  /* 设置滑块的宽度为父容器的宽度 */
 }
+
 .arrows {
   display: flex;
   margin-top: 20px;
@@ -205,5 +213,10 @@ export default {
 
 .arrow-left {
   margin-right: 0;
+}
+
+.slider {
+  padding-left: 40px;
+  padding-right: 40px;
 }
 </style>

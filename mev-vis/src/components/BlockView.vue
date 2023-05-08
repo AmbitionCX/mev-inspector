@@ -20,16 +20,16 @@
       </div>
     </div>
     <div class="container1">
-    <div class="block-container">
-    <p>BLOCK&nbsp;{{ this.$store.state.current_selected_block }}</p>
-      <p>{{currentIndex}}</p>
-      <canvas ref="canvas" @mousemove="highlightBlock"></canvas>
+      <div class="block-container">
+        <p>BLOCK&nbsp;{{ this.$store.state.current_selected_block }}</p>
+        <p>{{ currentIndex }}</p>
+        <canvas ref="canvas" @mousemove="highlightBlock"></canvas>
+      </div>
+      <button class="arrow-left" @click="moveLeft">
+      </button>
+      <button class="arrow-right" @click="moveRight">
+      </button>
     </div>
-    <button class="arrow-left" @click="moveLeft">
-    </button>
-    <button class="arrow-right" @click="moveRight">
-    </button>
-  </div>
     <svg ref="svg" style="margin: 0 auto;"></svg>
   </div>
 </template>
@@ -45,8 +45,8 @@ export default {
       blocks: [],
       blockSize: 10, // 小方块边长
       blockMargin: 1, // 小方块间距
-      like:0,
-      datalike:0,
+      like: 0,
+      datalike: 0,
     };
   },
   created() {
@@ -119,29 +119,29 @@ export default {
       }, 300);
 
     },
-currentIndex(newIndex, oldIndex) {
-    // 当 currentIndex 值发生变化时执行此函数
-    // newIndex 是新的 currentIndex 值
-    // oldIndex 是旧的 currentIndex 值
-    const svg = d3.select(this.$refs.svg);
-    svg.html("");
-    this.drawBlocks();
-    // 执行一些操作 ...
-  }
+    currentIndex(newIndex, oldIndex) {
+      // 当 currentIndex 值发生变化时执行此函数
+      // newIndex 是新的 currentIndex 值
+      // oldIndex 是旧的 currentIndex 值
+      const svg = d3.select(this.$refs.svg);
+      svg.html("");
+      this.drawBlocks();
+      // 执行一些操作 ...
+    }
 
 
   },
 
   methods: {
-    islike(a,b){
-      if(a!=0&&b!=0){
-        if(Math.abs(a-b)/a < 0.05){
+    islike(a, b) {
+      if (a != 0 && b != 0) {
+        if (Math.abs(a - b) / a < 0.05) {
           // console.log(1-Math.abs(a-b)/a)
-          return 1-Math.abs(a-b)/a
+          return 1 - Math.abs(a - b) / a
 
         }
-        else{return 0}
-      }else{return 0}
+        else { return 0 }
+      } else { return 0 }
     },
     generateBlocks() {
       const txAmount = this.$store.state.current_block_summary[0].tx_amount; // 获取交易数量
@@ -151,60 +151,60 @@ currentIndex(newIndex, oldIndex) {
       const maxGasUsed = Math.max(...gasUsedArr)
       for (let i = 0; i < txAmount; i++) {
         const data = this.$store.state.current_tx_summary[i]; // 获取交易数据
-        const frontrun = this.$store.state.current_sandwiches.find(tx => tx.frontrun_swap_transaction_hash === data.tx_hash );
-        const backtrun = this.$store.state.current_sandwiches.find (tx => tx.backrun_swap_transaction_hash === data.tx_hash);
+        const frontrun = this.$store.state.current_sandwiches.find(tx => tx.frontrun_swap_transaction_hash === data.tx_hash);
+        const backtrun = this.$store.state.current_sandwiches.find(tx => tx.backrun_swap_transaction_hash === data.tx_hash);
         const liquidations = this.$store.state.current_liquidations.find(tx => tx.transaction_hash === data.tx_hash);
         const arbitrages = this.$store.state.current_arbitrages.find(tx => tx.transaction_hash === data.tx_hash);
-        const sandefend = this.$store.state.current_sandwiches.find(tx => tx.sandwiched_transaction_hash.includes(data.tx_hash) );
+        const sandefend = this.$store.state.current_sandwiches.find(tx => tx.sandwiched_transaction_hash.includes(data.tx_hash));
         const relationship = [];
-        if(frontrun){
-          for (let j=0;j<frontrun.sandwiched_transaction_hash.length;j++){relationship.push(frontrun.sandwiched_transaction_hash[j])}
+        if (frontrun) {
+          for (let j = 0; j < frontrun.sandwiched_transaction_hash.length; j++) { relationship.push(frontrun.sandwiched_transaction_hash[j]) }
           relationship.push(frontrun.backrun_swap_transaction_hash)
         }
-        if(backtrun){
-          for (let j=0;j<backtrun.sandwiched_transaction_hash.length;j++){relationship.push(backtrun.sandwiched_transaction_hash[j])}
+        if (backtrun) {
+          for (let j = 0; j < backtrun.sandwiched_transaction_hash.length; j++) { relationship.push(backtrun.sandwiched_transaction_hash[j]) }
           relationship.push(backtrun.frontrun_swap_transaction_hash)
 
         }
-        if (sandefend){
+        if (sandefend) {
           relationship.push(sandefend.frontrun_swap_transaction_hash)
           relationship.push(sandefend.backrun_swap_transaction_hash)
         }
 
-        if (frontrun||backtrun) {
+        if (frontrun || backtrun) {
           const lightness = 10
           const color = 'purple'; // 生成渐变色
-          this.blocks.push({ color, data ,i,relationship});
+          this.blocks.push({ color, data, i, relationship });
         } else {
           if (liquidations) {
             const color = 'red';
-            this.blocks.push({ color, data,i,relationship });
+            this.blocks.push({ color, data, i, relationship });
           } else {
             if (arbitrages) {
               const color = 'green';
-              this.blocks.push({ color, data,i,relationship });
+              this.blocks.push({ color, data, i, relationship });
             } else {
-              if(sandefend){
+              if (sandefend) {
                 const color = 'orange';
-                this.blocks.push({ color,data,i,relationship });
-              }else{
+                this.blocks.push({ color, data, i, relationship });
+              } else {
                 this.like = 0
                 this.datalike = 0
-                const left = Math.max(0,i-5)
-                const right = Math.min(txAmount,i+5)
-                for(let j = left;j < right;j++){
-                  if(j!=i&&this.$store.state.current_tx_summary[j].to==data.to){
+                const left = Math.max(0, i - 5)
+                const right = Math.min(txAmount, i + 5)
+                for (let j = left; j < right; j++) {
+                  if (j != i && this.$store.state.current_tx_summary[j].to == data.to) {
                     this.like = 1
                   }
-                  if(j!=i){
-                    this.datalike = Math.max(this.datalike,this.islike(this.$store.state.current_tx_summary[j].gas_used,data.gas_used)*0.8
-                        +this.islike(this.$store.state.current_tx_summary[j].value,data.value)*0.2)
+                  if (j != i) {
+                    this.datalike = Math.max(this.datalike, this.islike(this.$store.state.current_tx_summary[j].gas_used, data.gas_used) * 0.8
+                      + this.islike(this.$store.state.current_tx_summary[j].value, data.value) * 0.2)
                   }
                 }
 
-                const lightness = Math.max(30, 90-this.datalike*20-this.like*5 - 10*(data.paid_fee / maxPaidFee)-5*(data.gas_used/maxGasUsed)); // 计算亮度（使用 value 值作为参考）
+                const lightness = Math.max(30, 90 - this.datalike * 20 - this.like * 5 - 10 * (data.paid_fee / maxPaidFee) - 5 * (data.gas_used / maxGasUsed)); // 计算亮度（使用 value 值作为参考）
                 const color = `hsl(210, 90%, ${lightness}%)`; // 生成渐变色
-                this.blocks.push({ color, data,i,relationship });
+                this.blocks.push({ color, data, i, relationship });
 
               }
 
@@ -216,12 +216,12 @@ currentIndex(newIndex, oldIndex) {
     drawHistogram() {
       const canvasWidth = this.canvas.width;
       const canvasHeight = this.canvas.height;
-      const blockWidth = this.canvas.width/this.$store.state.current_block_summary[0].tx_amount;
+      const blockWidth = this.canvas.width / this.$store.state.current_block_summary[0].tx_amount;
       const maxNum = Math.max(...this.blocks.map((block) => block.data.value));
       const highlightedIndex = this.highlightedIndex;
       const highlightedColor = this.highlightedColor;
       this.blocks.forEach((block, index) => {
-        const x = index * blockWidth ;
+        const x = index * blockWidth;
         const height = (block.data.value / maxNum) * canvasHeight;
         const y = canvasHeight - height;
         if (index === highlightedIndex) {
@@ -245,7 +245,7 @@ currentIndex(newIndex, oldIndex) {
         this.$store.commit('set_current_tx', this.$store.state.current_tx_summary[index]);
         this.drawHistogram();
       }
-      else{
+      else {
         this.currentIndex = -1;
       }
     },
@@ -279,12 +279,12 @@ currentIndex(newIndex, oldIndex) {
         .attr('stroke', 'red')
         .attr('stroke-width', 0.8);
       blocks.on('mouseover', function (event, d) {
-                // 将与当前块相同的块的选中状态更新为 true
+        // 将与当前块相同的块的选中状态更新为 true
         var currentData = d.relationship;
-        blocks.each(function(d) {
-            if (currentData.includes(d.data.tx_hash)) {
-                d.selected = true;
-            }
+        blocks.each(function (d) {
+          if (currentData.includes(d.data.tx_hash)) {
+            d.selected = true;
+          }
         });
         var table = '<table>';
         for (var key in d.data) {
@@ -299,8 +299,8 @@ currentIndex(newIndex, oldIndex) {
           .attr('height', 11)
           .attr('width', 11)
           .style('filter', 'brightness(200%)');
-        var selectedBlocks = blocks.filter(function(d) {
-            return d.selected;
+        var selectedBlocks = blocks.filter(function (d) {
+          return d.selected;
         });
         selectedBlocks
           .transition()
@@ -308,8 +308,8 @@ currentIndex(newIndex, oldIndex) {
           .attr('width', 11)
           .style('filter', 'brightness(200%)');
       }).on('mouseout', function (d) {
-        blocks.each(function(d) {
-            d.selected = false;
+        blocks.each(function (d) {
+          d.selected = false;
         });
 
         d3.select(this)
@@ -371,8 +371,9 @@ currentIndex(newIndex, oldIndex) {
 }
 
 canvas {
-display: flex;
+  display: flex;
 }
+
 .container {
   display: flex;
   justify-content: center;
@@ -464,6 +465,7 @@ rect {
 .arrow-right {
   right: 20%;
 }
+
 .label-wrapper {
   position: absolute;
   top: 20px;
@@ -479,18 +481,23 @@ rect {
 .red {
   background-color: red;
 }
+
 .green {
   background-color: green;
 }
+
 .purple {
   background-color: purple;
 }
+
 .orange {
   background-color: orange;
 }
+
 .blue {
   background-color: blue;
 }
+
 .color-label {
   margin-left: 5px;
   font-weight: bold;
@@ -502,8 +509,8 @@ rect {
   flex-wrap: wrap;
   align-items: center;
 }
+
 .break {
   flex-basis: 100%;
   height: 0;
-}
-</style>
+}</style>

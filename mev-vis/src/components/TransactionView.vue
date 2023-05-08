@@ -1,6 +1,6 @@
 
 <template>
-  <div id="Transaction-view">
+  <div id="Transactionview">
     <div class="panel-header">Transaction View</div>
     <button @click="toggleButtonsand()">{{ buttonTexts[0] }}</button>
     <br>
@@ -17,8 +17,8 @@
 import * as echarts from 'echarts'
 
 export default {
-    data() {
-      return {buttonTexts: ['sandwiches', 'liquidations', 'arbitrages'],}
+  data() {
+    return { buttonTexts: ['sandwiches', 'liquidations', 'arbitrages'], }
   },
   computed: {
     radarData() {
@@ -65,71 +65,72 @@ export default {
     this.drawRadarChart();
   },
   watch: {
-    '$store.state.current_tx': function() {
+    '$store.state.current_tx': function () {
       this.drawRadarChart();
       this.fuzhi();
     },
   },
   methods: {
-      toggleButtonsand() {
+    toggleButtonsand() {
+      const data = this.$store.state.current_tx
+      const sandwiches1 = this.$store.state.recordsand.find(tx => tx.tx_hash === data.tx_hash);
+      if (sandwiches1) {
         const data = this.$store.state.current_tx
-        const sandwiches1 = this.$store.state.recordsand.find(tx => tx.tx_hash === data.tx_hash);
-        if (sandwiches1) {
-          const data = this.$store.state.current_tx
-          this.buttonTexts[0] = 'sandwiches';
-          const a = this.$store.state.recordsand.filter(item => item.tx_hash != data.tx_hash);
-          this.$store.commit('set_record_sand',  a)
-        } else {
-          const data = this.$store.state.current_tx
-          const a = this.$store.state.recordsand.slice()
-          a.push(data)
-          console.log(a.length)
-          console.log(this.$store.state.recordsand.length)
-          this.$store.commit('set_record_sand',  a)
-          this.buttonTexts[0] = 'remove' ;
-          console.log(this.$store.state.recordsand)
-        }
+        this.buttonTexts[0] = 'sandwiches';
+        const a = this.$store.state.recordsand.filter(item => item.tx_hash != data.tx_hash);
+        this.$store.commit('set_record_sand', a)
+      } else {
+        const data = this.$store.state.current_tx
+        const a = this.$store.state.recordsand.slice()
+        a.push(data)
+        console.log(a.length)
+        console.log(this.$store.state.recordsand.length)
+        this.$store.commit('set_record_sand', a)
+        this.buttonTexts[0] = 'remove';
+        console.log(this.$store.state.recordsand)
+      }
     },
     toggleButtonarb() {
+      const data = this.$store.state.current_tx
+      const arbitrages1 = this.$store.state.recordarb.find(tx => tx.tx_hash === data.tx_hash);
+      if (arbitrages1) {
         const data = this.$store.state.current_tx
-        const arbitrages1 = this.$store.state.recordarb.find(tx => tx.tx_hash === data.tx_hash);
-        if (arbitrages1) {
-          const data = this.$store.state.current_tx
-          this.buttonTexts[1] = 'arbitrages';
-          const a = this.$store.state.recordarb.filter(item => item.tx_hash != data.tx_hash);
-          this.$store.commit('set_record_arb',  a)
-        } else {
-          const data = this.$store.state.current_tx
-          const a = this.$store.state.recordarb.slice()
-          a.push(data)
-          this.$store.commit('set_record_arb',  a)
-          this.buttonTexts[1] = 'remove' ;
-        }
+        this.buttonTexts[1] = 'arbitrages';
+        const a = this.$store.state.recordarb.filter(item => item.tx_hash != data.tx_hash);
+        this.$store.commit('set_record_arb', a)
+      } else {
+        const data = this.$store.state.current_tx
+        const a = this.$store.state.recordarb.slice()
+        a.push(data)
+        this.$store.commit('set_record_arb', a)
+        this.buttonTexts[1] = 'remove';
+      }
     },
     toggleButtonliq() {
+      const data = this.$store.state.current_tx
+      const liq = this.$store.state.recordliq.find(tx => tx.tx_hash === data.tx_hash);
+      if (liq) {
         const data = this.$store.state.current_tx
-        const liq = this.$store.state.recordliq.find(tx => tx.tx_hash === data.tx_hash);
-        if (liq) {
-          const data = this.$store.state.current_tx
-          this.buttonTexts[2] = 'liquidations';
-          const a = this.$store.state.recordliq.filter(item => item.tx_hash != data.tx_hash);
-          this.$store.commit('set_record_liq',  a)
-        } else {
-          const data = this.$store.state.current_tx
-          const a = this.$store.state.recordliq.slice()
-          a.push(data)
-          this.$store.commit('set_record_liq',  a)
-          this.buttonTexts[2] = 'remove' ;
-        }
+        this.buttonTexts[2] = 'liquidations';
+        const a = this.$store.state.recordliq.filter(item => item.tx_hash != data.tx_hash);
+        this.$store.commit('set_record_liq', a)
+      } else {
+        const data = this.$store.state.current_tx
+        const a = this.$store.state.recordliq.slice()
+        a.push(data)
+        this.$store.commit('set_record_liq', a)
+        this.buttonTexts[2] = 'remove';
+      }
     },
 
-     fuzhi(){const data = this.$store.state.current_tx
+    fuzhi() {
+      const data = this.$store.state.current_tx
       const sandwiches1 = this.$store.state.recordsand.find(tx => tx.tx_hash === data.tx_hash);
-      if (sandwiches1) {this.buttonTexts[0]='remove'}else{this.buttonTexts[0]='sandwiches'}
+      if (sandwiches1) { this.buttonTexts[0] = 'remove' } else { this.buttonTexts[0] = 'sandwiches' }
       const arbitrages1 = this.$store.state.recordarb.find(tx => tx.tx_hash === data.tx_hash);
-      if (arbitrages1) {this.buttonTexts[1]='remove'}else{this.buttonTexts[1]='arbitrages'}
+      if (arbitrages1) { this.buttonTexts[1] = 'remove' } else { this.buttonTexts[1] = 'arbitrages' }
       const liquidations1 = this.$store.state.recordliq.find(tx => tx.tx_hash === data.tx_hash);
-      if (liquidations1) {this.buttonTexts[2]='remove'}else{this.buttonTexts[2]='liquidations'}
+      if (liquidations1) { this.buttonTexts[2] = 'remove' } else { this.buttonTexts[2] = 'liquidations' }
     },
     drawRadarChart() {
       const radarChart = echarts.init(this.$refs.radar);
@@ -139,60 +140,62 @@ export default {
         seriesData
       } = this.radarData;
       const front = this.$store.state.current_sandwiches.find(
-            tx => tx.frontrun_swap_transaction_hash === this.$store.state.current_tx.tx_hash
-                );
-        if(front){
-          seriesData[0].name = 'front'
-          console.log(front)
-          const back = this.$store.state.current_tx_summary.find(
-             tx => tx.tx_hash === front.backrun_swap_transaction_hash
-          )
-          console.log(back)
-          const {
-            gas_price,
-            gas_used,
-            priority_fee_per_gas,
-            max_fee_per_gas,
-            paid_fee,
-            burnt_fee,
-          } = back;
-          seriesData.push(
-              {
+        tx => tx.frontrun_swap_transaction_hash === this.$store.state.current_tx.tx_hash
+      );
+      if (front) {
+        seriesData[0].name = 'front'
+        console.log(front)
+        const back = this.$store.state.current_tx_summary.find(
+          tx => tx.tx_hash === front.backrun_swap_transaction_hash
+        )
+        console.log(back)
+        const {
+          gas_price,
+          gas_used,
+          priority_fee_per_gas,
+          max_fee_per_gas,
+          paid_fee,
+          burnt_fee,
+        } = back;
+        seriesData.push(
+          {
             value: [gas_price, gas_used, priority_fee_per_gas, max_fee_per_gas, paid_fee, burnt_fee],
             name: 'back',
           },
-          )
-        }
-        const back = this.$store.state.current_sandwiches.find(
-            tx => tx.backrun_swap_transaction_hash === this.$store.state.current_tx.tx_hash
-                );
-        if(back){
-          seriesData[0].name = 'back'
-          const front = this.$store.state.current_tx_summary.find(
-             tx => tx.tx_hash === back.frontrun_swap_transaction_hash
-          )
-          console.log(back)
-          const {
-            gas_price,
-            gas_used,
-            priority_fee_per_gas,
-            max_fee_per_gas,
-            paid_fee,
-            burnt_fee,
-          } = front;
-          seriesData.push(
-              {
+        )
+      }
+      const back = this.$store.state.current_sandwiches.find(
+        tx => tx.backrun_swap_transaction_hash === this.$store.state.current_tx.tx_hash
+      );
+      if (back) {
+        seriesData[0].name = 'back'
+        const front = this.$store.state.current_tx_summary.find(
+          tx => tx.tx_hash === back.frontrun_swap_transaction_hash
+        )
+        console.log(back)
+        const {
+          gas_price,
+          gas_used,
+          priority_fee_per_gas,
+          max_fee_per_gas,
+          paid_fee,
+          burnt_fee,
+        } = front;
+        seriesData.push(
+          {
             value: [gas_price, gas_used, priority_fee_per_gas, max_fee_per_gas, paid_fee, burnt_fee],
             name: 'front',
           },
-          )
-        }
-        const liquidations = this.$store.state.current_liquidations.find(tx => tx.transaction_hash === this.$store.state.current_tx.tx_hash);
-        if(liquidations){seriesData[0].name = 'liquidations'
-        }
+        )
+      }
+      const liquidations = this.$store.state.current_liquidations.find(tx => tx.transaction_hash === this.$store.state.current_tx.tx_hash);
+      if (liquidations) {
+        seriesData[0].name = 'liquidations'
+      }
       const arbitrages = this.$store.state.current_arbitrages.find(tx => tx.transaction_hash === this.$store.state.current_tx.tx_hash);
-        if(arbitrages){seriesData[0].name = 'arbitrages'
-        }
+      if (arbitrages) {
+        seriesData[0].name = 'arbitrages'
+      }
       const option = {
         grid: {
           containLabel: true, // 将包括坐标轴的标签在内的图形绘制在容器的内部
@@ -253,13 +256,14 @@ export default {
 .radar-container {
   height: 500px;
 }
-  button {
-    border: 1px solid #ccc;
-    padding: 10px 15px;
-    margin-bottom: 1px;
-  }
+
+button {
+  border: 1px solid #ccc;
+  padding: 10px 15px;
+  margin-bottom: 1px;
+}
+
 .radar-chart {
   height: 100%;
   width: 100%;
-}
-</style>
+}</style>

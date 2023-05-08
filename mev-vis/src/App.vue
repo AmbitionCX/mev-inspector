@@ -34,10 +34,6 @@
       </el-main>
     </el-container>
   </div>
-
-  <div>
-    <p>{{ this.$store.state.current_block_summary }}</p>
-  </div>
 </template>
 
 <script>
@@ -107,18 +103,6 @@ export default {
 
 <style>
 
-#Selector {
-  top: 400px;
-  position: absolute;
-  border: solid;
-}
-
-#Recorder {
-  top: 500px;
-  position: absolute;
-  border: solid;
-}
-
 #app {
   position: absolute;
   top: 0;
@@ -127,36 +111,6 @@ export default {
   height: 100%;
 }
 
-.panel-header {
-  position: absolute;
-  left: 0px;
-  top: 0px;
-  padding: 0 8px;
-  width: 45px;
-  height: 18px;
-  line-height: 18px;
-  font-size: 8px;
-  background: #415c68;
-  color: #fcfcfc;
-  display: flex;
-  font-weight: bold;
-  border-radius: 2px;
-  box-shadow: 0 1px 2px rgba(26 26 26 0.2);
-  z-index: 99;
-  text-align: left;
-  text-decoration: inherit;
-}
-
-.panel-header-end {
-  position: absolute;
-  top: 0px;
-  left: 60.5px;
-  border-top: 18px solid #455a64;
-  border-right: 18px solid #ffffff;
-  border-bottom: 0px solid #ffffff;
-  z-index: 98;
-  text-decoration: inherit;
-}
 .search-box {
   width: 300px;
   font-size: 16px;
